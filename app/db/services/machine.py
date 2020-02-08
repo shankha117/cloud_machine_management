@@ -1,153 +1,71 @@
-from app.db.dbmanager import db
-
-def get_movies_by_country(countries):
-    """
-    Finds and returns movies by country.
-    Returns a list of dictionaries, each dictionary contains a title and an _id.
-    """
-    try:
-        # TODO: Projection
-
-        return list(db.movies.find({"countries": {"$in": countries}}, {"title": 1}))
-
-    except Exception as e:
-        return e
+from app.db.mongo_db_model import Model
+from flask import current_app
 
 
-def get_movies_faceted(filters, page, movies_per_page):
-    """
-    Returns movies and runtime and ratings facets. Also returns the total
-    movies matched by the filter.
+class Instance_Data_Layer(Model):
 
-    Uses the same sort_key as get_movies
-    """
-    sort_key = "tomatoes.viewer.numReviews"
+    def __init__(self):
 
-    pipeline = []
+        self._collection = 'instance'
 
-    if "cast" in filters:
-        pipeline.extend([{
-            "$match": {"cast": {"$in": filters.get("cast")}}
-        }, {
-            "$sort": {sort_key: DESCENDING}
-        }])
-    else:
-        raise AssertionError("No filters to pass to faceted search!")
+    def create_cluster(self, data):
 
-    counting = pipeline[:]
-    count_stage = {"$count": "count"}
-    counting.append(count_stage)
+        try:
+            data = self.save(data)
+            cluster_id = data.inserted_id
 
-    skip_stage = {"$skip": movies_per_page * page}
-    limit_stage = {"$limit": movies_per_page}
-    facet_stage = {
-        "$facet": {
-            "runtime": [{
-                "$bucket": {
-                    "groupBy": "$runtime",
-                    "boundaries": [0, 60, 90, 120, 180],
-                    "default": "other",
-                    "output": {
-                        "count": {"$sum": 1}
-                    }
-                }
-            }],
-            "rating": [{
-                "$bucket": {
-                    "groupBy": "$metacritic",
-                    "boundaries": [0, 50, 70, 90, 100],
-                    "default": "other",
-                    "output": {
-                        "count": {"$sum": 1}
-                    }
-                }
-            }],
-            "movies": [{
-                "$addFields": {
-                    "title": "$title"
-                }
-            }]
-        }
-    }
+            current_app.logger.info("cluster created {0}".format(cluster_id))
+            return cluster_id
 
+        except Exception as e:
+            current_app.logger.error(e)
+            raise Exception(e)
 
-    # TODO: Faceted Search
-    pipeline.append(skip_stage)
-    pipeline.append(limit_stage)
-    pipeline.append(facet_stage)
+    def get_cluster_details(self, cluster_id):
 
-    try:
-        movies = list(db.movies.aggregate(pipeline, allowDiskUse=True))[0]
-        count = list(db.movies.aggregate(counting, allowDiskUse=True))[
-            0].get("count")
-        return (movies, count)
-    except OperationFailure:
-        raise OperationFailure(
-            "Results too large to sort, be more restrictive in filter")
+        try:
 
+            data = self.search_one(cluster_id)
+            return data
 
-def build_query_sort_project(filters):
-    """
-    Builds the `query` predicate, `sort` and `projection` attributes for a given
-    filters dictionary.
-    """
-    query = {}
-    sort = [("tomatoes.viewer.numReviews", DESCENDING), ("_id", ASCENDING)]
-    project = None
-    if filters:
-        if "text" in filters:
-            query = {"$text": {"$search": filters["text"]}}
-            meta_score = {"$meta": "textScore"}
-            sort = [("score", meta_score)]
-            project = {"score": meta_score}
-        elif "cast" in filters:
-            query = {"cast": {"$in": filters["cast"]}}
-        elif "genres" in filters:
+        except Exception as e:
+            current_app.logger.error(e)
+            raise Exception(e)
 
+    def make_match_query_for_search(self,cluster_id: str,tags: list, type: str):
+        match = {}
 
-            # Construct a query that will search for the chosen genre.
-            query = {"genres": {"$in": filters["genres"]}}
+        if cluster_id:
+            match['cluster_id'] = cluster_id
+        if tags:
+            all_array = []
+            for i in eval(tags):
+                all_array.append({"$elemMatch": i})
 
-    return query, sort, project
+            match["properties.Tags"] = {"$all": all_array}
 
+        if type:
+            match["type"] = type
 
-def get_movies(filters, page, movies_per_page):
-    """
-    Returns a cursor to a list of movie documents.
+        return match
 
-    Based on the page number and the number of movies per page, the result may
-    be skipped and limited.
+    def get_all_machine(self, cluster_id: str, order: str, tags: list, type: str, page: int, limit: int, project: dict):
 
-    The `filters` from the API are passed to the `build_query_sort_project`
-    method, which constructs a query, sort, and projection, and then that query
-    is executed by this method (`get_movies`).
+        try:
 
-    Returns 2 elements in a tuple: (movies, total_num_movies)
-    """
-    query, sort, project = build_query_sort_project(filters)
-    if project:
-        cursor = db.movies.find(query, project).sort(sort)
-    else:
-        cursor = db.movies.find(query).sort(sort)
+            match = self.make_match_query(cluster_id=cluster_id,tags=tags,type=type)
 
-    total_num_movies = 0
-    if page == 0:
-        total_num_movies = db.movies.count_documents(query)
+            data, count = self.search_bulk(match=match, order=order, page=page, limit=limit, project= dict)
 
-    """
-    Ticket: Paging
+            return data, count
 
-    Before this method returns back to the API, use the "movies_per_page"
-    argument to decide how many movies get displayed per page. The "page"
-    argument will decide which page
+        except Exception as e:
+            current_app.logger.error(e)
+            raise Exception(e)
 
-    Paging can be implemented by using the skip() and limit() methods against
-    the Pymongo cursor.
-    """
-    get_movies_faceted
-    # Use the cursor to only return the movies that belong on the current page.
-    movies = cursor.skip(page * movies_per_page).limit(movies_per_page)
+    def delete_machine(self,cluster_id: str):
 
-    return (list(movies), total_num_movies)
+        pass
+
 
 
