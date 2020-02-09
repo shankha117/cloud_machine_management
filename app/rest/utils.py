@@ -10,6 +10,9 @@ def expect(input, expectedType, field, *args):
         else:
             abort(400, 'Invalid input for {0}'.format(field))
 
+    elif args:
+        return args[0]
+
     return None
 
 
@@ -31,6 +34,7 @@ def required_body(fields):
         return _wrapped
 
     return _file_content_validation_wrapper
+
 
 def required_params(fields):
     """

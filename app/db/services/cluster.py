@@ -1,10 +1,8 @@
 from app.db.mongo_db_model import Model
 from flask import current_app
 from datetime import datetime
-from app.db.services.machine import Instance_Data_Layer
 from bson.objectid import ObjectId
-
-# TODO read all the cluster keys from ENUM, this is must
+from app.db.fields.cluster import Cluster
 
 
 class Cluster_Data_Layer(Model):
@@ -13,19 +11,20 @@ class Cluster_Data_Layer(Model):
 
         self._collection = 'cluster'
 
-    def create_cluster(self, template: str, type: str, clustername: str, properties: dict):
+    def create_cluster(self, template: str, type: str, region: str, clustername: str, properties: dict):
 
         try:
             doc = {
-                "template": template,
-                "type": type,
-                "clustername": clustername,
-                "properties": properties,
-                "created_date": datetime.now(),
-                "updated_date": datetime.now()
+                Cluster.template.value: template,
+                Cluster.type.value: type,
+                Cluster.region.value: region,
+                Cluster.cluster_name.value: clustername,
+                Cluster.properties.value: properties,
+                Cluster.created_date.value: datetime.now(),
+                Cluster.updated_date.value: datetime.now()
             }
 
-            data = self.save(doc,index="clustername")
+            data = self.save(doc, index=Cluster.cluster_name.value)
 
             cluster_id = data.inserted_id
 
@@ -48,7 +47,7 @@ class Cluster_Data_Layer(Model):
             current_app.logger.error(e)
             raise Exception(e)
 
-    def get_all_cluster(self, order: str, tags: list, type: str, page: int, limit: int):
+    def get_all_cluster(self, order: str, tags: str, type: str, page: int, limit: int):
 
         try:
             match = {}
@@ -58,10 +57,10 @@ class Cluster_Data_Layer(Model):
                 for i in eval(tags):
                     all_array.append({"$elemMatch": i})
 
-                match["properties.Tags"] = {"$all": all_array}
+                match[Cluster.tags.value['abs']] = {"$all": all_array}
 
             if type:
-                match["type"] = type
+                match[Cluster.type.value] = type
 
             data, count = self.search_bulk(match=match, order=order, page=page, limit=limit, project={})
 
@@ -71,11 +70,10 @@ class Cluster_Data_Layer(Model):
             current_app.logger.error(e)
             raise Exception(e)
 
-    def delete_cluster(self,cluster_id: str):
+    def delete_cluster(self, cluster_id: str):
 
         try:
-
-            query = {"_id":ObjectId(cluster_id)}
+            query = {"_id": ObjectId(cluster_id)}
 
             return self.delete_one(query)
 
@@ -83,29 +81,43 @@ class Cluster_Data_Layer(Model):
             current_app.logger.error(e)
             raise Exception(e)
 
-    def add_tags(self,cluster_id: str, tags: list):
+    def add_tags(self, cluster_id: str, tags: list):
 
         try:
-            tags_list = list(i["key"] for i in tags)
+            tags_list = list(i[Cluster.tags_key.value['rel']] for i in tags)
 
-            query_string  = {"properties.Tags.key" : {"$nin" : tags_list }}
+            query_string = {Cluster.tags_key.value['abs']: {"$nin": tags_list}}
 
-            set_query ={"$addToSet" : {"properties.Tags" :{"$each": tags } } }
+            set_query = {"$addToSet": {Cluster.tags.value['abs']: {"$each": tags}}}
 
-            return self.update_one(id=cluster_id, match_query=query_string,set_query=set_query)
+            return self.update_one(id=cluster_id, match_query=query_string, set_query=set_query)
 
         except Exception as e:
             current_app.logger.error(e)
             raise Exception(e)
 
-    def update_tag(self,cluster_id: str, key: str,value: str):
+    def update_tag(self, cluster_id: str, key: str, value: str):
 
         try:
-            query_string  = {"properties.Tags": { "$elemMatch": { "Key": key} }}
+            query_string = {Cluster.tags.value['abs']: {"$elemMatch": {Cluster.tags_key.value['rel']: key}}}
 
-            set_query = { "$set": { "properties.Tags.$.Value" : value } }
+            set_query = {"$set": {Cluster.tags.value['abs'] + ".$." + Cluster.tags_value.value['rel']: value}}
 
-            return self.update_one(cluster_id=cluster_id, match_query=query_string,set_query=set_query)
+            return self.update_one(id=cluster_id, match_query=query_string, set_query=set_query)
+
+        except Exception as e:
+            current_app.logger.error(e)
+            raise Exception(e)
+
+    def delete_tag(self, cluster_id: str, key_list: list):
+
+        try:
+            query_string = {}
+
+            set_query = {"$pull": {Cluster.tags.value['abs']: {Cluster.tags_key.value['rel']:
+                                                                   {"$in": key_list}}}}
+
+            return self.update_one(id=cluster_id, match_query=query_string, set_query=set_query)
 
         except Exception as e:
             current_app.logger.error(e)

@@ -6,20 +6,20 @@ from flask import current_app
 from werkzeug.local import LocalProxy
 
 
-
 class Model(object):
 
     def __init__(self, collection_name):
         self._collection = None
 
-    def save(self, data, index) -> object:
+    def save(self, data, index, query=None) -> object:
         try:
-            db[self._collection].create_index(index, unique=True)
+            if index:
+                db[self._collection].create_index(index, unique=True)
 
             return db[self._collection].insert_one(data)
 
         except errors.DuplicateKeyError:
-            raise Exception('{0} -  {1} already exists'.format(index,data[index]))
+            raise Exception('{0} -  {1} already exists'.format(index, data[index]))
 
     def bulk_save(self, data):
         pass
@@ -71,7 +71,7 @@ class Model(object):
             counting.append(count_stage)
 
             # pagination stage
-            if page and limit:
+            if limit != None and page != None:
                 skip_stage = {"$skip": limit * page}
 
                 limit_stage = {"$limit": limit}
@@ -96,14 +96,14 @@ class Model(object):
             current_app.logger.error(traceback.format_exc())
             raise Exception(e)
 
-    def update_one(self, id: str,match_query: dict, set_query:dict):
+    def update_one(self, id: str, match_query: dict, set_query: dict):
 
         try:
-            query = {"_id":ObjectId(id)}
+            query = {"_id": ObjectId(id)}
             if match_query:
                 query.update(match_query)
 
-            updated = db[self._collection].update_one( query,set_query,False,True)
+            updated = db[self._collection].update_one(query, set_query, False, True)
 
             return updated.modified_count
 
@@ -112,15 +112,26 @@ class Model(object):
             current_app.logger.error(traceback.format_exc())
             raise Exception(e)
 
-    def update_many(self, query):
-        pass
+    def update_many(self, search_query: dict, set_query: dict):
+        try:
 
-    def delete_one(self, query):
+            result = db[self._collection].update_many(search_query, set_query)
+
+            return result.modified_count
+
+        except Exception as e:
+            raise Exception(e)
+
+    def delete_one(self, query: dict):
         try:
             db[self._collection].delete_one(query)
             return True
         except Exception as e:
             raise Exception(e)
 
-    def delete_many(self,query):
-        pass
+    def delete_many(self, query: dict):
+        try:
+            db[self._collection].delete_many(query)
+            return True
+        except Exception as e:
+            raise Exception(e)

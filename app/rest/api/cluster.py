@@ -3,10 +3,10 @@ from . import cloud_manager
 from werkzeug.exceptions import BadRequest, MethodNotAllowed
 from app.rest.utils import expect, required_body, required_params
 from app.rest.services.cluster_service import Cluster_Service
-
+from app.db.services.cluster import Cluster
 
 @cloud_manager.route('/cluster', methods=['POST'])
-@required_body(fields=["type", "clustername"])
+@required_body(fields=['type', 'clustername','region'])
 def create_cluster():
     try:
         post_data = request.get_json()
@@ -15,11 +15,13 @@ def create_cluster():
 
         cluster_type = expect(post_data.get('type'), str, 'type')
 
+        region = expect(post_data.get('region'),str,'region')
+
         clustername = expect(post_data.get('clustername'), str, 'clustername')
 
         properties = expect(post_data.get('properties'), dict, 'properties')
 
-        inserted_id = Cluster_Service().create_cluster(template=template, type=cluster_type,
+        inserted_id = Cluster_Service().create_cluster(template=template, type=cluster_type,region=region,
                                                        clustername=clustername, properties=properties)
 
         return jsonify({'message': 'cluster created', 'cluster_id': inserted_id}), 200
@@ -110,27 +112,24 @@ def update_cluster_tags(cluster_id):
     try:
         post_data = request.get_json()
 
-        key = expect(post_data.get('key'), list, 'key')
+        key = expect(post_data.get('key'), str, 'key')
 
-        value = expect(request.args.get('value'), str, 'value')
+        value = expect(post_data.get('value'), str, 'value')
 
-        return jsonify({'message': 'cluster {0} is updated'.format(cluster_id)}), 200
+        return Cluster_Service().update_tags(cluster_id=cluster_id, key=key, value=value)
 
     except Exception as ex:
 
         return jsonify({'message': str(ex)}), 500
 
 
-# @cloud_manager.route('/cluster/<cluster_id>/tags', methods=['DELETE'])
-# def delete_cluster_tags(cluster_id):
-#     try:
-#         res = Cluster_Service().delete_cluster(cluster_id=cluster_id)
-#
-#         tags = expect(request.args.get('tags'), str, 'tags')
-#
-#         if res:
-#             return jsonify({'message': 'cluster {0} deleted'.format(cluster_id)}), 200
-#
-#     except Exception as ex:
-#
-#         return jsonify({'message': str(ex)}), 500
+@cloud_manager.route('/cluster/<cluster_id>/tags', methods=['DELETE'])
+def delete_cluster_tags(cluster_id):
+    try:
+        keys = expect(request.args.get('tags'), str, 'tags')
+
+        return Cluster_Service().delete_tags(cluster_id=cluster_id, keys=eval(keys))
+
+    except Exception as ex:
+
+        return jsonify({'message': str(ex)}), 500

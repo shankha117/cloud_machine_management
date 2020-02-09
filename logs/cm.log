@@ -1,94 +1,26 @@
 Traceback (most recent call last):
-  File "/home/boombox/PycharmProjects/cloud_machine_management/app/db/mongo_db_model.py", line 106, in update
-    updated = db[self._collection].upate_one( query,set_query,False,True)
-  File "/home/boombox/PycharmProjects/cloud_machine_management/venv/lib/python3.7/site-packages/pymongo/collection.py", line 3356, in __call__
-    self.__name.split(".")[-1])
-TypeError: 'Collection' object is not callable. If you meant to call the 'upate_one' method on a 'Collection' object it is failing because no such method exists.
+  File "/home/boombox/PycharmProjects/cloud_machine_management/app/db/services/cluster.py", line 57, in get_all_cluster
+    for i in eval(tags):
+  File "<string>", line 1
+    [            {                "Key": "environment",                "Value": "production"            },                                  {                        "key": "storage",                        "value": "production"                    }                ]]
+                                                                                                                                                                                                                                                                         ^
+SyntaxError: unexpected EOF while parsing
 
 During handling of the above exception, another exception occurred:
 
 Traceback (most recent call last):
-  File "/home/boombox/PycharmProjects/cloud_machine_management/app/db/services/cluster.py", line 92, in add_tags
-    return self.update(id=cluster_id, match_query=query_string,set_query=set_query)
-  File "/home/boombox/PycharmProjects/cloud_machine_management/app/db/mongo_db_model.py", line 113, in update
+  File "/home/boombox/PycharmProjects/cloud_machine_management/app/rest/services/cluster_service.py", line 34, in get_all_clusters
+    limit=limit)
+  File "/home/boombox/PycharmProjects/cloud_machine_management/app/db/services/cluster.py", line 71, in get_all_cluster
     raise Exception(e)
-Exception: 'Collection' object is not callable. If you meant to call the 'upate_one' method on a 'Collection' object it is failing because no such method exists.
+Exception: unexpected EOF while parsing (<string>, line 1)
 
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "/home/boombox/PycharmProjects/cloud_machine_management/app/rest/services/cluster_service.py", line 58, in add_tags
-    result = Cluster_Data_Layer().add_tags(cluster_id=cluster_id, tags=tags)
-  File "/home/boombox/PycharmProjects/cloud_machine_management/app/db/services/cluster.py", line 96, in add_tags
-    raise Exception(e)
-Exception: 'Collection' object is not callable. If you meant to call the 'upate_one' method on a 'Collection' object it is failing because no such method exists.
-
-Traceback (most recent call last):
-  File "/home/boombox/PycharmProjects/cloud_machine_management/app/db/mongo_db_model.py", line 106, in update
-    updated = db[self._collection].upate_one( query,set_query,False,True)
-  File "/home/boombox/PycharmProjects/cloud_machine_management/venv/lib/python3.7/site-packages/pymongo/collection.py", line 3356, in __call__
-    self.__name.split(".")[-1])
-TypeError: 'Collection' object is not callable. If you meant to call the 'upate_one' method on a 'Collection' object it is failing because no such method exists.
-
-'Collection' object is not callable. If you meant to call the 'upate_one' method on a 'Collection' object it is failing because no such method exists.
-Traceback (most recent call last):
-  File "/home/boombox/PycharmProjects/cloud_machine_management/app/db/mongo_db_model.py", line 106, in update
-    updated = db[self._collection].upate_one( query,set_query,False,True)
-  File "/home/boombox/PycharmProjects/cloud_machine_management/venv/lib/python3.7/site-packages/pymongo/collection.py", line 3356, in __call__
-    self.__name.split(".")[-1])
-TypeError: 'Collection' object is not callable. If you meant to call the 'upate_one' method on a 'Collection' object it is failing because no such method exists.
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "/home/boombox/PycharmProjects/cloud_machine_management/app/db/services/cluster.py", line 92, in add_tags
-    return self.update(id=cluster_id, match_query=query_string,set_query=set_query)
-  File "/home/boombox/PycharmProjects/cloud_machine_management/app/db/mongo_db_model.py", line 113, in update
-    raise Exception(e)
-Exception: 'Collection' object is not callable. If you meant to call the 'upate_one' method on a 'Collection' object it is failing because no such method exists.
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "/home/boombox/PycharmProjects/cloud_machine_management/app/rest/services/cluster_service.py", line 58, in add_tags
-    result = Cluster_Data_Layer().add_tags(cluster_id=cluster_id, tags=tags)
-  File "/home/boombox/PycharmProjects/cloud_machine_management/app/db/services/cluster.py", line 96, in add_tags
-    raise Exception(e)
-Exception: 'Collection' object is not callable. If you meant to call the 'upate_one' method on a 'Collection' object it is failing because no such method exists.
-
-cluster created 5e3f34df0460fd9b1fcba2fe
-Traceback (most recent call last):
-  File "/home/boombox/PycharmProjects/cloud_machine_management/app/db/mongo_db_model.py", line 106, in update
-    updated = db[self._collection].upate_one( query,set_query,False,True)
-  File "/home/boombox/PycharmProjects/cloud_machine_management/venv/lib/python3.7/site-packages/pymongo/collection.py", line 3356, in __call__
-    self.__name.split(".")[-1])
-TypeError: 'Collection' object is not callable. If you meant to call the 'upate_one' method on a 'Collection' object it is failing because no such method exists.
-
-'Collection' object is not callable. If you meant to call the 'upate_one' method on a 'Collection' object it is failing because no such method exists.
-Traceback (most recent call last):
-  File "/home/boombox/PycharmProjects/cloud_machine_management/app/db/mongo_db_model.py", line 106, in update
-    updated = db[self._collection].upate_one( query,set_query,False,True)
-  File "/home/boombox/PycharmProjects/cloud_machine_management/venv/lib/python3.7/site-packages/pymongo/collection.py", line 3356, in __call__
-    self.__name.split(".")[-1])
-TypeError: 'Collection' object is not callable. If you meant to call the 'upate_one' method on a 'Collection' object it is failing because no such method exists.
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "/home/boombox/PycharmProjects/cloud_machine_management/app/db/services/cluster.py", line 92, in add_tags
-    return self.update(id=cluster_id, match_query=query_string,set_query=set_query)
-  File "/home/boombox/PycharmProjects/cloud_machine_management/app/db/mongo_db_model.py", line 113, in update
-    raise Exception(e)
-Exception: 'Collection' object is not callable. If you meant to call the 'upate_one' method on a 'Collection' object it is failing because no such method exists.
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "/home/boombox/PycharmProjects/cloud_machine_management/app/rest/services/cluster_service.py", line 58, in add_tags
-    result = Cluster_Data_Layer().add_tags(cluster_id=cluster_id, tags=tags)
-  File "/home/boombox/PycharmProjects/cloud_machine_management/app/db/services/cluster.py", line 96, in add_tags
-    raise Exception(e)
-Exception: 'Collection' object is not callable. If you meant to call the 'upate_one' method on a 'Collection' object it is failing because no such method exists.
-
-clustername -  MyCluster107 already exists
-cluster created 5e3f35a57ff8763b957ffb86
+this is the pipeline--->[{'$match': {'properties.tags': {'$all': [{'$elemMatch': {'Key': 'environment', 'Value': 'production'}}, {'$elemMatch': {'key': 'storage', 'value': 'production'}}]}}}, {'$sort': {'created_date': -1}}, {'$skip': 0}, {'$limit': 2}]
+this is the pipeline--->[{'$match': {'properties.tags': {'$all': [{'$elemMatch': {'Key': 'environment', 'Value': 'production'}}, {'$elemMatch': {'key': 'storage', 'value': 'production'}}]}}}, {'$sort': {'created_date': -1}}, {'$skip': 0}, {'$limit': 2}]
+this is the pipeline--->[{'$match': {'properties.tags': {'$all': [{'$elemMatch': {'Key': 'environment', 'Value': 'production'}}, {'$elemMatch': {'key': 'storage', 'value': 'production'}}]}}}, {'$sort': {'created_date': -1}}, {'$skip': 0}, {'$limit': 2}]
+cluster_name -  MyCluster2 already exists
+cluster created 5e407bb868340c1f187354d2
+this is the pipeline--->[{'$match': {'properties.tags': {'$all': [{'$elemMatch': {'key': 'environment', 'value': 'production'}}, {'$elemMatch': {'key': 'storage', 'value': 'production'}}]}}}, {'$sort': {'created_date': -1}}, {'$skip': 0}, {'$limit': 2}]
+this is the pipeline--->[{'$match': {}}, {'$sort': {'created_date': -1}}, {'$skip': 0}, {'$limit': 2}]
+this is the pipeline--->[{'$match': {'cluster_id': ObjectId('5e406a5fc2253fbbd3094783')}}, {'$sort': {'created_date': -1}}, {'$skip': 0}, {'$limit': 3}]
+this is the pipeline--->[{'$match': {'properties.tags': {'$all': [{'$elemMatch': {'key': 'owner', 'value': 'TeamA'}}]}}}, {'$sort': {'created_date': -1}}, {'$skip': 0}, {'$limit': 3}]
