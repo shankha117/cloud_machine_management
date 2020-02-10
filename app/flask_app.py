@@ -7,6 +7,7 @@ from datetime import datetime
 from config.config_loader import load_config
 from app.utils.logger import set_up_logging
 import json
+from flask_swagger_ui import get_swaggerui_blueprint
 
 
 class MongoJsonEncoder(JSONEncoder):
@@ -33,6 +34,18 @@ def create_app():
 
     # add db encoder
     cmm.json_encoder = MongoJsonEncoder
+
+    # swagger ui
+    SWAGGER_URL = '/swagger'
+    API_URL = '/static/swagger.json'
+    SWAGGERUI_BLUEPRINT = get_swaggerui_blueprint(
+        SWAGGER_URL,
+        API_URL,
+        config={
+            'app_name': "cmm_swagger"
+        }
+    )
+    cmm.register_blueprint(SWAGGERUI_BLUEPRINT, url_prefix=SWAGGER_URL)
 
     # register api paths through blueprints
     cmm.register_blueprint(cloud_manager)

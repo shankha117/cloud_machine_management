@@ -1,0 +1,69 @@
+version: "3"
+services:
+  cmm-rest:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+#    image: cmm:v1
+    restart: always
+    ports:
+      - "8081:8081"
+    links:
+      - cmm-mongodb
+    depends_on:
+      - cmm-mongodb
+    environment:
+      - mongo_db_host=cmm-mongodb
+      - mongo_db_port=27017
+      - mongo_db_auth=True
+      - mongo_db_user=cmmuser
+      - mongo_db_password=cmm#secret123
+      - mongo_db_name=cmm
+      - debugger=True
+#    volumes:
+#      - ./cmm_logs:/cmm/logs
+    networks:
+      - backend
+
+  cmm-mongodb:
+    image: mongo:3.6
+    environment:
+#      - MONGODB_USERNAME=cmmuser
+#      - MONGODB_PASSWORD=cmm#secret123
+      - MONGODB_DATABASE=cmm
+      - MONGODB_DATA_DIR=/data/db
+      - MONDODB_LOG_DIR=/dev/null
+
+    volumes:
+#      - ./db_data:/data/db:rw
+      - ./scripts:/docker-entrypoint-initdb.d
+    networks:
+      - backend
+
+
+#  cmm-mongodb:
+#    image: mongo:3.6
+#    restart: unless-stopped
+#    environment:
+#      - MONGO_INITDB_ROOT_USERNAME=cmmuser
+#      - MONGO_INITDB_ROOT_PASSWORD=password
+#      - MONGO_INITDB_DATABASE=cmm
+#      - MONGODB_USERNAME=cmmuser
+#      - MONGODB_PASSWORD=password
+#      - MONGODB_DATABASE=cmm
+#      - MONGODB_DATA_DIR=/data/db
+#      - MONDODB_LOG_DIR=/dev/null
+#    ports:
+#      - 27017:27017
+#    volumes:
+#      - ./db_data:/data/db:rw
+#    networks:
+#      - backend
+
+networks:
+  backend:
+    driver: bridge
+
+volumes:
+  db_data:
+    driver: local

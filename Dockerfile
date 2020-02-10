@@ -1,6 +1,13 @@
-FROM python:3.6-slim
-MAINTAINER shankha.sinha@ust-global.com
+FROM ubuntu:18.04 as builder
+MAINTAINER shankha.shuvro@hotmail.com
+
 RUN apt-get update -y \
+    && apt-get install -y --no-install-recommends \
+    python3-setuptools \
+    python3-venv \
+    python3-dev \
+    python3-pip \
+    figlet \
     && rm -rf /var/lib/apt/lists/*
 
 RUN python3 -m venv /opt/venv
@@ -12,7 +19,7 @@ ARG REQS=base
 RUN pip3 install --trusted-host pypi.org --trusted-host files.pythonhosted.org -r requirements.txt
 
 FROM ubuntu:18.04
-MAINTAINER shankha.sinha@ust-global.com
+MAINTAINER shankha.shuvro@hotmail.com
 COPY --from=builder /opt/venv /opt/venv
 
 # use the virtualenv:
@@ -24,16 +31,6 @@ RUN apt-get update -y \
     python3-venv \
     python3-dev \
     python3-pip \
-    portaudio19-dev \
-    libgirepository1.0-dev \
-    gcc \
-    libcairo2-dev \
-    pkg-config \
-    libgstreamer1.0-0 \
-    python3-twisted \
-    python3-gst-1.0 \
-    python3-pyaudio \
-    gir1.2-gtk-3.0 \
     figlet \
     && rm -rf /var/lib/apt/lists/*
 

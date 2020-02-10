@@ -1,0 +1,1876 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "description": "CMM swagger",
+    "version": "1.0",
+    "title": "Swagger CMM",
+    "contact": {
+      "email": "shankha.shuvro@hotmail.com"
+    }
+  },
+  "security": [
+    {
+      "Authorization_token": []
+    },
+    {
+      "Organization_name": []
+    },
+    {
+      "user_id": []
+    },
+    {
+      "Offline-Token": []
+    }
+  ],
+  "paths": {
+    "/projects": {
+      "post": {
+        "tags": [
+          "projects"
+        ],
+        "summary": "Create new project",
+        "description": "",
+        "operationId": "createProject",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Projects.create.input"
+              }
+            }
+          },
+          "description": "Create new project",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failure"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "projects"
+        ],
+        "summary": "Get Projects",
+        "description": "Get one or more projects based on given filter criteria",
+        "operationId": "GetProjects",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/offsetParam"
+          },
+          {
+            "$ref": "#/components/parameters/limitParam"
+          },
+          {
+            "$ref": "#/components/parameters/status_filter"
+          },
+          {
+            "$ref": "#/components/parameters/sort_by"
+          },
+          {
+            "$ref": "#/components/parameters/sort_order"
+          },
+          {
+            "in": "query",
+            "name": "search_word",
+            "description": "Optional keyword to filter, Match against name/desc",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "filter_for_user",
+            "description": "Setting to true wil pull only the projects specific to current user",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectGetResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failure"
+          }
+        }
+      }
+    },
+    "/projects/{project_id}/result": {
+      "get": {
+        "tags": [
+          "projects"
+        ],
+        "summary": "Get the results of project",
+        "description": "",
+        "operationId": "ProjectResultDetails",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "description": "Project ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "format",
+            "description": "Format of result",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "xls"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectResultResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Project",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectInvalid"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{project_id}/tags/{tag_name}": {
+      "get": {
+        "tags": [
+          "projects"
+        ],
+        "summary": "Get the details of specific tag in the project",
+        "description": "",
+        "operationId": "ProjectTagDetails",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "description": "Project ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "tag_name",
+            "description": "Tag Name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TagResultResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Tag Name",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TagInvalid"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{project_id}": {
+      "get": {
+        "tags": [
+          "projects"
+        ],
+        "summary": "Get the details of project",
+        "description": "",
+        "operationId": "ProjectDetails",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "description": "Project ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectIdResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Project",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectInvalid"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "projects"
+        ],
+        "summary": "Update the details of a project",
+        "description": "",
+        "operationId": "updateProject",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "description": "Project ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Projects.create.input"
+              }
+            }
+          },
+          "description": "Update project",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectUpdateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Project",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectInvalid"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "projects"
+        ],
+        "summary": "Delete the project by ID",
+        "description": "",
+        "operationId": "deleteProject",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "description": "Project ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectDeleteResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Project",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectInvalid"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{project_id}/tags": {
+      "get": {
+        "tags":["projects"],
+        "summary": "Get all the tag names under the project ID",
+        "description": "",
+        "operationId": "ProjectDetails",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "description": "Project ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectTagResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Project",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectInvalid"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/documents": {
+      "post": {
+        "tags": [
+          "Documents"
+        ],
+        "summary": "Add new document",
+        "description": "",
+        "operationId": "CreateDocument",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Docs"
+              }
+            }
+          },
+          "description": "Add new Document",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentMetadata"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failure"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Documents"
+        ],
+        "summary": "Get list of documents",
+        "description": "",
+        "operationId": "getDocuments",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "project_id",
+            "description": "Project id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/offsetParam"
+          },
+          {
+            "$ref": "#/components/parameters/limitParam"
+          },
+          {
+            "$ref": "#/components/parameters/status_filter"
+          },
+          {
+            "$ref": "#/components/parameters/sort_by"
+          },
+          {
+            "$ref": "#/components/parameters/sort_order"
+          },
+          {
+            "$ref": "#/components/parameters/tag_name"
+          },
+          {
+            "$ref": "#/components/parameters/include_aggregate"
+          },
+          {
+            "$ref": "#/components/parameters/parent_doc_id"
+          },
+          {
+            "in": "query",
+            "name": "search_word",
+            "description": "Optional keyword to filter, Match against name/desc",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failure"
+          }
+        }
+      }
+    },
+    "/documents/{document_id}": {
+      "get": {
+        "tags": [
+          "Documents"
+        ],
+        "summary": "Get the details of the particular document",
+        "description": "",
+        "operationId": "getDocument",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "document_id",
+            "description": "Document object that needs to be listed",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentDetails"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failure"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Documents"
+        ],
+        "summary": "Update the metadata of documents",
+        "description": "",
+        "operationId": "updateDocument",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "document_id",
+            "description": "Document ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DocumentPut"
+              }
+            }
+          },
+          "description": "Update Document",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentDetails"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Documents"
+        ],
+        "summary": "Delete a particular document",
+        "description": "",
+        "operationId": "DeleteDocumentApi",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "document_id",
+            "description": "id of the corresponding Document to be deleted",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Deleted the document"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          }
+        }
+      }
+    },
+    "/documents/{document_id}/results": {
+      "get": {
+        "tags": [
+          "Documents"
+        ],
+        "summary": "Get response after processing the file",
+        "description": "Extracted Knowledge from Vespa",
+        "operationId": "DocumentResultsApi",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "document_id",
+            "description": "Document id of the document",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Each Object in the list contains the answers and other details for evey question supplied to the document",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Documents_results_response"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          }
+        }
+      }
+    },
+    "/documents/getfile/{document_id}": {
+      "get": {
+        "tags": [
+          "Documents"
+        ],
+        "summary": "Get the document file content",
+        "description": "contents of the document",
+        "operationId": "DocumentContentsApi",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "document_id",
+            "description": "Document id of the document",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/highlighted"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "document_contents": {
+                      "$ref": "#/components/schemas/DocFileContents"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          }
+        }
+      }
+    },
+    "/documents/getpdf/{document_id}": {
+      "get": {
+        "tags": [
+          "Documents"
+        ],
+        "summary": "Download the document file",
+        "description": "Download the document file",
+        "operationId": "DownloadDocument",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "document_id",
+            "description": "Document id of the document",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/highlighted"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          }
+        }
+      }
+    },
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8081/cmm/api/v1",
+      "description": "Local"
+    },
+  ],
+  "components": {
+    "parameters": {
+      "offsetParam": {
+        "in": "query",
+        "name": "offset",
+        "required": false,
+        "description": "The number of items to skip before starting to collect the result set.",
+        "schema": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0
+        }
+      },
+      "limitParam": {
+        "in": "query",
+        "name": "limit",
+        "required": false,
+        "description": "The numbers of items to return.",
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 50,
+          "default": 10
+        }
+      },
+      "sort_order": {
+        "in": "query",
+        "name": "sort_order",
+        "description": "Optional filter based on status",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "asc",
+            "desc"
+          ]
+        }
+      },
+      "include_aggregate": {
+        "in": "query",
+        "name": "include_aggregate",
+        "description": "Optional filter whether to include_aggregate files",
+        "required": false,
+        "schema": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "parent_doc_id": {
+        "in": "query",
+        "name": "parent_doc_id",
+        "description": "Optional filter on parent_doc_id of files",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "tag_name": {
+        "in": "query",
+        "name": "tag_name",
+        "description": "Optional filter based on tag_name",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "_comment": "multiple values comma seperated",
+          "example": "Batch1"
+        }
+      },
+      "config_type_a": {
+        "in": "query",
+        "name": "locale",
+        "description": "Optional filter based on locale type",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "config_type_b": {
+        "in": "query",
+        "name": "domain",
+        "description": "Optional filter based on domain type",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "config_type_c": {
+        "in": "query",
+        "name": "document_type",
+        "description": "Optional filter based on document type",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "AuthToken": {
+        "in": "header",
+        "name": "Authorization",
+        "description": "Token from keycloak, format - Bearer",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "user_id": {
+        "in": "header",
+        "name": "user_id",
+        "description": "User id if security is disabled",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "status_filter": {
+        "in": "query",
+        "name": "status",
+        "description": "Optional filter based on status",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "NEW",
+            "WAITING",
+            "SCHEDULED",
+            "RUNNING",
+            "FAILED",
+            "SUCCESS"
+          ]
+        }
+      },
+      "sort_by": {
+        "in": "query",
+        "name": "sort_by",
+        "description": "Sort based on date",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "created_date",
+            "modified_date"
+          ]
+        }
+      },
+      "highlighted": {
+        "in": "query",
+        "name": "highlighted",
+        "description": "Get the hightlighted PDF",
+        "required": false,
+        "schema": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "securitySchemes": {
+      "Authorization_token": {
+        "type": "apiKey",
+        "name": "Authorization",
+        "in": "header",
+        "description": "Provide the Auth 2.0 token from keycloak, format - Bearer"
+      },
+      "Organization_name": {
+        "type": "apiKey",
+        "name": "Organization-name",
+        "in": "header",
+        "description": "Provide Keycloak organization name (realm name)"
+      },
+      "user_id": {
+        "type": "apiKey",
+        "name": "user_id",
+        "in": "header",
+        "description": "user id (only applicable if Auth is disabled"
+      },
+      "Offline_Token": {
+        "type": "apiKey",
+        "name": "Offline-Token",
+        "in": "header",
+        "description": "Offline-Token"
+      }
+    },
+    "schemas": {
+      "Projects.create.input": {
+        "type": "object",
+        "required": [
+          "name",
+          "desc"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "sample project"
+          },
+          "desc": {
+            "type": "string",
+            "example": "sample project for legal"
+          },
+          "locale": {
+            "type": "string",
+            "example": "USA"
+          },
+          "domain": {
+            "type": "string",
+            "example": "Legal"
+          },
+          "type": {
+            "type": "string",
+            "example": "MSA"
+          }
+        },
+        "xml": {
+          "name": "Projects"
+        }
+      },
+      "DocJob": {
+        "type": "object",
+        "required": [
+          "document_name",
+          "project_id"
+        ],
+          "properties": {
+            "projects": {
+              "type": "object",
+              "properties": {
+                "hits": {
+                  "type": "object",
+                  "properties": {
+                    "total": {
+                      "type": "object",
+                      "properties": {
+                        "value": {
+                          "type": "integer",
+                          "example": "3"
+                        }
+                      }
+                    },
+                    "hits": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "_id": {
+                            "type": "string",
+                            "example": "eJay824BdehpG9CvrCoH"
+                          },
+                          "_source": {
+                            "type": "object",
+                            "properties": {
+                              "document_id": {
+                                "type": "string",
+                                "example": "pMnGf28B1CuG2fQxfi__"
+                              },
+                              "project_id": {
+                                "type": "string",
+                                "example": "dsm8f28B1CuG2fQxfCc5"
+                              },
+                              "status": {
+                                "type": "string",
+                                "example": "SUCCESS"
+                              },
+                              "created_by": {
+                                "type": "integer",
+                                "example": "1"
+                              },
+                              "start_time": {
+                                "type": "string",
+                                "example": ""
+                              },
+                              "created_date": {
+                                "type": "string",
+                                "example": "2019-12-11T06:43:23.246Z"
+                              },
+                              "modified_date": {
+                                "type": "string",
+                                "example": "2019-12-11T06:43:23.246Z"
+                              },
+                              "end_time": {
+                                "type": "string",
+                                "example": "2019-12-11T06:43:23.246Z"
+                              },
+                              "scheduled_time": {
+                                "type": "string",
+                                "example": "2019-12-11T06:43:23.246Z"
+                              },
+                              "celery_job_info": {
+                                "type": "string",
+                                "example": "abcd-efg-xyz"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+        },
+        "xml": {
+          "name": "DocJob"
+        }
+      },
+      "ProjectResultResponse": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string",
+            "example": "<base64>"
+          }
+        },
+        "xml": {
+          "name": "ProjectResultResponse"
+        }
+      },
+
+      "TagResultResponse": {
+        "type": "object",
+          "properties":{
+            "_id": {
+              "type": "string",
+              "example": "fJay824BdehpG9CvrCoH"
+            },
+            "_source":{
+            "type":"object",
+              "properties":{
+                "project_id": {
+                  "type": "string",
+                  "example": "fJay824BdehpG9CvrCoH"
+                  },
+                "tag_name": {
+                    "type": "string",
+                    "example": "batch1234"
+                  },
+                "status": {
+                  "type": "string",
+                  "example": "RUNNING"
+                  },
+                "created_time": {
+                  "type": "string",
+                  "example": "2019-12-11T06:43:23.246Z"
+                  },
+                "updated_time": {
+                  "type": "string",
+                  "example": "2019-12-11T06:43:23.246Z"
+                  },
+                "statistics": {
+                  "type": "object",
+                  "properties": {
+                    "total": {
+                      "type": "integer",
+                      "example": 20
+                      },
+                    "success": {
+                      "type": "integer",
+                      "example": 10
+                      },
+                    "failure": {
+                      "type": "integer",
+                      "example": 5
+                      },
+                    "running": {
+                      "type": "integer",
+                      "example": 5
+                      }
+                    }
+                  }
+                }
+              }
+            },
+        "xml": {
+          "name": "ProjectResponse"
+        }
+      },
+
+
+      "ProjectResponse": {
+        "type": "object",
+        "properties": {
+          "project_details": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "example": "eJay824BdehpG9CvrCoH"
+              },
+              "_source": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Sample project"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Example project for legal docs"
+                  },
+                  "type": {
+                    "type": "object",
+                    "properties": {
+                      "domain": {
+                        "type": "string",
+                        "example": "Finance"
+                      },
+                      "location": {
+                        "type": "string",
+                        "example": "USA"
+                      },
+                      "doc_type": {
+                        "type": "string",
+                        "example": "Legal"
+                      }
+                    }
+                  },
+                  "status": {
+                    "type": "string",
+                    "example": "ACTIVE"
+                  },
+                  "created_by": {
+                    "type": "integer",
+                    "example": "1"
+                  },
+                  "output": {
+                    "type": "string",
+                    "example": "null"
+                  },
+                  "created_date": {
+                    "type": "string",
+                    "example": "2019-12-11T06:43:23.246Z"
+                  },
+                  "modified_date": {
+                    "type": "string",
+                    "example": "2019-12-11T06:43:23.246Z"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "xml": {
+          "name": "ProjectResponse"
+        }
+      },
+      "ProjectUpdateResponse": {
+        "type": "object",
+        "properties": {
+          "project_details": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string"
+              },
+              "_source": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                      "type": "string",
+                      "example": "project new"
+                    },
+                    "description": {
+                      "type": "string",
+                      "example": "My new project"
+                    },
+                    "type": {
+                      "type": "object",
+                      "properties": {
+                        "domain": {
+                          "type": "string",
+                          "example": "Finanace"
+                        },
+                        "location": {
+                          "type": "string",
+                          "example": "USA"
+                        },
+                        "doc_type": {
+                          "type": "string",
+                          "example": "Legal"
+                        }
+                      }
+                    },
+                    "status": {
+                      "type": "string",
+                      "example": "Legal"
+                    },
+                    "created_by": {
+                      "type": "integer",
+                      "example": "1"
+                    },
+                    "output": {
+                      "type": "string",
+                      "example": ""
+                    },
+                    "created_date": {
+                      "type": "string",
+                      "example": "2019-12-11T06:43:23.246Z"
+                    },
+                    "modified_date": {
+                      "type": "string",
+                      "example": "2019-12-11T06:43:23.246Z"
+                    }
+                }
+              }
+            }
+          }
+        },
+        "xml": {
+          "name": "ProjectResponse"
+        }
+      },
+      "ProjectDeleteResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Deleted the project and 2 documents"
+          }
+        },
+        "xml": {
+          "name": "ProjectResponse"
+        }
+      },
+      "ProjectInvalid": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "project_id"
+          },
+          "description": {
+            "type": "string",
+            "example": "Field 'project_id': Expects a valid project"
+          }
+        },
+        "xml": {
+          "name": "ProjectResponse"
+        }
+      },
+      "TagInvalid": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "tag_name"
+          },
+          "description": {
+            "type": "string",
+            "example": "Field 'tag_name' Expects a valid tag name"
+          }
+        },
+        "xml": {
+          "name": "ProjectResponse"
+        }
+      },
+      "ProjectGetResponse": {
+        "type": "object",
+        "properties": {
+          "projects": {
+            "type": "object",
+            "properties": {
+              "hits": {
+                "type": "object",
+                "properties": {
+                  "total": {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "integer",
+                        "example": "3"
+                      }
+                    }
+                  },
+                  "hits": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "_id": {
+                          "type": "string",
+                          "example": "eJay824BdehpG9CvrCoH"
+                        },
+                        "_source": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string",
+                              "example": "project new"
+                            },
+                            "description": {
+                              "type": "string",
+                              "example": "My new project"
+                            },
+                            "type": {
+                              "type": "object",
+                              "properties": {
+                                "domain": {
+                                  "type": "string",
+                                  "example": "Finanace"
+                                },
+                                "location": {
+                                  "type": "string",
+                                  "example": "USA"
+                                },
+                                "doc_type": {
+                                  "type": "string",
+                                  "example": "Legal"
+                                }
+                              }
+                            },
+                            "status": {
+                              "type": "string",
+                              "example": "Legal"
+                            },
+                            "created_by": {
+                              "type": "integer",
+                              "example": "1"
+                            },
+                            "output": {
+                              "type": "string",
+                              "example": ""
+                            },
+                            "created_date": {
+                              "type": "string",
+                              "example": "2019-12-11T06:43:23.246Z"
+                            },
+                            "modified_date": {
+                              "type": "string",
+                              "example": "2019-12-11T06:43:23.246Z"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "xml": {
+          "name": "ProjectGetResponse"
+        }
+      },
+      "ProjectIdResponse": {
+        "type": "object",
+        "properties": {
+          "project_details": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "example": "eJay824BdehpG9CvrCoH"
+              },
+              "_source": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Sample project"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Example project for legal docs"
+                  },
+                  "type": {
+                    "type": "object",
+                    "properties": {
+                      "domain": {
+                        "type": "string",
+                        "example": "Finance"
+                      },
+                      "location": {
+                        "type": "string",
+                        "example": "USA"
+                      },
+                      "doc_type": {
+                        "type": "string",
+                        "example": "Legal"
+                      }
+                    }
+                  },
+                  "status": {
+                    "type": "string",
+                    "example": "ACTIVE"
+                  },
+                  "created_by": {
+                    "type": "integer",
+                    "example": "1"
+                  },
+                  "output": {
+                    "type": "string",
+                    "example": "null"
+                  },
+                  "created_date": {
+                    "type": "string",
+                    "example": "2019-12-11T06:43:23.246Z"
+                  },
+                  "modified_date": {
+                    "type": "string",
+                    "example": "2019-12-11T06:43:23.246Z"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "xml": {
+          "name": "ProjectIdResponse"
+        }
+      },
+      "ProjectTagResponse": {
+        "type": "object",
+        "properties": {
+          "tags": {
+            "type": "object",
+            "properties": {
+              "hits": {
+                "type": "object",
+                "properties": {
+                  "total": {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "integer",
+                        "example": "1"
+                      }
+                    }
+                  },
+                  "hits": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                        "properties":{
+                          "_id": {
+                            "type": "string",
+                            "example": "fJay824BdehpG9CvrCoH"
+                          },
+                          "_source":{
+                          "type":"object",
+                            "properties":{
+                              "project_id": {
+                                "type": "string",
+                                "example": "fJay824BdehpG9CvrCoH"
+                                },
+                              "tag_name": {
+                                  "type": "string",
+                                  "example": "batch1234"
+                                },
+                              "status": {
+                                "type": "string",
+                                "example": "RUNNING"
+                                },
+                              "created_time": {
+                                "type": "string",
+                                "example": "2019-12-11T06:43:23.246Z"
+                                },
+                              "updated_time": {
+                                "type": "string",
+                                "example": "2019-12-11T06:43:23.246Z"
+                                },
+                              "statistics": {
+                                "type": "object",
+                                "properties": {
+                                  "total": {
+                                    "type": "integer",
+                                    "example": 20
+                                    },
+                                  "success": {
+                                    "type": "integer",
+                                    "example": 10
+                                    },
+                                  "failure": {
+                                    "type": "integer",
+                                    "example": 5
+                                    },
+                                  "running": {
+                                    "type": "integer",
+                                    "example": 5
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "xml": {
+            "name": "ProjectTagResponse"
+          }
+        },
+
+      "Docs": {
+        "type": "object",
+        "required": [
+          "document_name",
+          "project_id",
+          "Doc File"
+        ],
+        "properties": {
+          "project_id": {
+            "type": "string",
+            "example": "e4f1d710-062f-4cdb-9f99-92436b494d05"
+          },
+          "document_name": {
+            "type": "string",
+            "example": "sample_doc.pdf"
+          },
+          "tags": {
+            "type": "string",
+            "_comment": "multiple values comma seperated",
+            "example":"BatchABC"
+          },
+          "locale": {
+            "type": "string",
+            "example": "en-us"
+          },
+          "domain": {
+            "type": "string",
+            "example": "finance"
+          },
+          "type": {
+            "type": "string",
+            "example": "stakeholder reports"
+          },
+          "schedule_flag": {
+            "type": "boolean",
+            "default": false,
+            "example": false
+          },
+          "doc_file": {
+            "$ref": "#/components/schemas/DocFileContents"
+          }
+        },
+        "xml": {
+          "name": "Docs"
+        }
+      },
+      "DocumentMetadata": {
+        "type": "object",
+        "properties": {
+          "document_name": {
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "example": "BatchABC"
+              }
+            },
+          "domain_metadata": {
+            "type": "object",
+            "properties": {
+              "domain": {
+                "type": "string"
+              },
+              "locale": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              }
+            }
+          },
+          "storage_link": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "created_date": {
+            "type": "string"
+          },
+          "created_by": {
+            "type": "integer"
+          },
+          "modified_by": {
+            "type": "integer"
+          },
+          "modified_date": {
+            "type": "string"
+          },
+          "annotated_doc_link": {
+            "type": "string"
+          },
+          "sha_data": {
+            "type": "string"
+          },
+          "file_type": {
+            "type": "string"
+          },
+          "aggregate_file": {
+            "type": "string"
+          },
+          "parent_doc_id": {
+            "type": "string"
+          },
+          "error_code": {
+            "type": "string"
+          },
+          "error_message": {
+            "type": "string"
+          },
+          "error_trace": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "document_name": "sample_doc.pdf",
+          "project_id": "g6oi0G4BMzZAQpzGKCUz",
+          "tags": ["Batch1","Batch2"],
+          "_comment": "multiple values comma seperated",
+          "storage_link": "/home/akhilraj/projects/du-solution/src/data_fs/tmp/2019_12_05.13_48_09_148239/BW_file.jpg",
+          "annotated_doc_link": "/home/akhilraj/projects/du-solution/src/data_fs/tmp/2019_12_05.13_48_09_148239/BW_file.pdf",
+          "status": "ACTIVE",
+          "domain_metadata": {
+            "domain": "finance",
+            "locale": "en-us",
+            "type": "stakeholder reports"
+          },
+          "sha_data": "4f28cfa88d374450e1600d9a12e969cdb10b344fd171977bd93019e9c87972db39418c0033df548146cf11a5a0904ca15ed157a66f92052eb76449b2522fa3bf",
+          "file_type": "pdf",
+          "aggregate_file": false,
+          "parent_doc_id": "1Mi7-28BKg6z5TpQN2TB",
+          "error_code": "",
+          "error_message": "",
+          "error_trace": "",
+          "created_date": "2019-12-05T08:18:09.148Z",
+          "created_by": 1,
+          "modified_by": 1,
+          "modified_date": "2019-12-05T08:18:09.148Z"
+        },
+        "xml": {
+          "name": "DocumentMetadata"
+        }
+      },
+      "DocFileContents": {
+        "type": "string",
+        "format": "binary",
+        "example": "34543534v543v534vdfgdfgdf"
+      },
+      "DocumentDetails": {
+        "type": "object",
+        "properties": {
+          "document_details": {
+            "type": "object",
+            "$ref": "#/components/schemas/DocListsObjects"
+          }
+        }
+      },
+      "DocListResponse": {
+        "type": "object",
+        "properties": {
+          "documents": {
+            "type": "object",
+            "properties": {
+              "hits": {
+                "type": "object",
+                "properties": {
+                  "total": {
+                    "type": "integer",
+                    "example": 100
+                  },
+                  "hits": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/DocListsObjects"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "DocListsObjects": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "zTTOjW8BuQEOahspthI-"
+          },
+          "_source": {
+            "$ref": "#/components/schemas/DocumentMetadata"
+          }
+        }
+      },
+      "Documents_results_response": {
+        "type": "object",
+        "properties": {
+          "batch_id": {
+            "type": "string",
+            "example": "b32a9772-d08d-4315-9a6a-5c487da87a39"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Vespa_results"
+            }
+          }
+        }
+      },
+      "DocumentPut": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "sample document"
+          },
+          "domain": {
+            "type": "string",
+            "example": "sample domain"
+          },
+          "locale": {
+            "type": "string",
+            "example": "sample locale"
+          },
+          "tags": {
+            "type": "string",
+            "example": "Batch2",
+            "_comment": "multiple values comma seperated"
+          },
+          "type": {
+            "type": "string",
+            "example": "sample type"
+          }
+        },
+        "xml": {
+          "name": "DocumentPut"
+        }
+      },
+      "Vespa_results": {
+        "type": "object",
+        "properties": {
+          "answer": {
+            "type": "string"
+          },
+          "batch_id": {
+            "type": "string"
+          },
+          "document_id": {
+            "type": "string"
+          },
+          "document_name": {
+            "type": "string"
+          },
+          "document_type": {
+            "type": "string"
+          },
+          "domain": {
+            "type": "string"
+          },
+          "field": {
+            "type": "string"
+          },
+          "keyword": {
+            "type": "string"
+          },
+          "locale": {
+            "type": "string"
+          },
+          "manswer": {
+            "type": "string"
+          },
+          "old_page": {
+            "type": "integer"
+          },
+          "page": {
+            "type": "integer"
+          },
+          "para": {
+            "type": "integer"
+          },
+          "policy": {
+            "type": "integer"
+          },
+          "ranswer": {
+            "type": "string"
+          },
+          "raw": {
+            "type": "string"
+          },
+          "response_type": {
+            "type": "string"
+          },
+          "score": {
+            "type": "integer"
+          }
+        },
+        "example": {
+          "answer": "NA",
+          "batch_id": "b32a9772-d08d-4315-9a6a-5c487da87a39",
+          "document_id": "7458abe3-6f97-4065-b180-e781be6b72bb",
+          "document_name": "sample1.pdf",
+          "document_type": "stakeholder reports",
+          "domain": "finance",
+          "field": "CEO",
+          "keyword": "group chief executive",
+          "locale": "us",
+          "manswer": "NA",
+          "old_page": -1,
+          "page": -1,
+          "para": -1,
+          "policy": -1,
+          "ranswer": "NA",
+          "raw": "",
+          "response_type": "ALPHA",
+          "score": 0
+        },
+        "xml": {
+          "name": "Vespa_results"
+        }
+      },
+
+      "externalDocs": {
+        "description": "Find out more about Swagger"
+      }
+    }
+  }
+}

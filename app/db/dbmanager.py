@@ -27,6 +27,17 @@ def get_db():
     CMM_DB_PASSWORD = current_app.config['mongo_db_password']
 
     if db is None:
+        current_app.logger.info(
+            "these are the credentials  {0}, {1}, {2},{3},{4},{5}".format(CMM_DB_HOST, CMM_DB_PORT, CMM_DB_NAME,
+                                                                          CMM_DB_AUTH, CMM_DB_USER, CMM_DB_PASSWORD))
+
+        current_app.logger.info(
+            "these are the credentials  {0}, {1}, {2},{3},{4},{5}".format(type(CMM_DB_HOST), type(CMM_DB_PORT), CMM_DB_NAME,
+                                                                          CMM_DB_AUTH, CMM_DB_USER, CMM_DB_PASSWORD))
+
+        current_app.logger.info(
+            "these are the credentials  {0}, {1}, {2},{3},{4},{5}".format(type(CMM_DB_HOST), type(CMM_DB_PORT), CMM_DB_NAME,
+                                                                          CMM_DB_AUTH, CMM_DB_USER, CMM_DB_PASSWORD))
 
         db = g._database = MongoClient(
             CMM_DB_HOST,
@@ -41,6 +52,7 @@ def get_db():
             db.the_database.authenticate(CMM_DB_USER, CMM_DB_PASSWORD, source=CMM_DB_NAME)
 
     return db[CMM_DB_NAME]
+
 
 # Use LocalProxy to read the global db instance with just `db`
 db = LocalProxy(get_db)

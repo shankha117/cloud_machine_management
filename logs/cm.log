@@ -24,3 +24,17 @@ this is the pipeline--->[{'$match': {'properties.tags': {'$all': [{'$elemMatch':
 this is the pipeline--->[{'$match': {}}, {'$sort': {'created_date': -1}}, {'$skip': 0}, {'$limit': 2}]
 this is the pipeline--->[{'$match': {'cluster_id': ObjectId('5e406a5fc2253fbbd3094783')}}, {'$sort': {'created_date': -1}}, {'$skip': 0}, {'$limit': 3}]
 this is the pipeline--->[{'$match': {'properties.tags': {'$all': [{'$elemMatch': {'key': 'owner', 'value': 'TeamA'}}]}}}, {'$sort': {'created_date': -1}}, {'$skip': 0}, {'$limit': 3}]
+cluster_name -  MyCluster3 already exists
+cluster created 5e4194940895d0f0a43ce6b4
+these are the credentials  localhost, 27017, cmm,True,cmmuser,cmm#secret123
+these are the credentials  <class 'str'>, <class 'str'>, cmm,True,cmmuser,cmm#secret123
+localhost:27017: [Errno 111] Connection refused
+these are the credentials  localhost, 27017, cmm,True,cmmuser,cmm#secret123
+these are the credentials  <class 'str'>, <class 'str'>, cmm,True,cmmuser,cmm#secret123
+localhost:27017: [Errno 111] Connection refused
+these are the credentials  localhost, 27017, cmm,True,cmmuser,cmm#secret123
+these are the credentials  <class 'str'>, <class 'str'>, cmm,True,cmmuser,cmm#secret123
+these are the credentials  localhost, 27017, cmm,True,cmmuser,cmm#secret123
+these are the credentials  <class 'str'>, <class 'str'>, cmm,True,cmmuser,cmm#secret123
+these are the credentials  localhost, 27017, cmm,True,cmmuser,cmm#secret123
+these are the credentials  <class 'str'>, <class 'str'>, cmm,True,cmmuser,cmm#secret123
