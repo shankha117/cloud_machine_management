@@ -1,4 +1,4 @@
-var dbadmin = db.getSiblingDB('admin');
+var dbadmin = db.getSiblingDB('cmm');
 dbadmin.createUser(
   {
     user: "cmmuser",

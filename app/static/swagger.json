@@ -1,9 +1,9 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "description": "CMM swagger",
+    "description": "cmm swagger",
     "version": "1.0",
-    "title": "Swagger CMM",
+    "title": "Cloud Machine Management",
     "contact": {
       "email": "shankha.shuvro@hotmail.com"
     }
@@ -35,11 +35,11 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Projects.create.input"
+                "$ref": "#/components/schemas/Cluster.create.input"
               }
             }
           },
-          "description": "Create new project",
+          "description": "Create new cluster",
           "required": true
         },
         "responses": {
@@ -48,7 +48,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProjectResponse"
+                  "$ref": "#/components/schemas/Cluster.create.response"
                 }
               }
             }
@@ -62,7 +62,7 @@
         "tags": [
           "clusters"
         ],
-        "summary": "Get clusters",
+        "summary": "Get all clusters",
         "description": "Get one or more clusters based on given filter criteria",
         "operationId": "GetProjects",
         "parameters": [
@@ -73,32 +73,13 @@
             "$ref": "#/components/parameters/limitParam"
           },
           {
-            "$ref": "#/components/parameters/status_filter"
-          },
-          {
-            "$ref": "#/components/parameters/sort_by"
+            "$ref": "#/components/parameters/cluster_type"
           },
           {
             "$ref": "#/components/parameters/sort_order"
           },
           {
-            "in": "query",
-            "name": "search_word",
-            "description": "Optional keyword to filter, Match against name/desc",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "filter_for_user",
-            "description": "Setting to true wil pull only the projects specific to current user",
-            "required": false,
-            "schema": {
-              "type": "boolean",
-              "default": false
-            }
+            "$ref": "#/components/parameters/tag_name"
           }
         ],
         "responses": {
@@ -107,7 +88,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProjectGetResponse"
+                  "$ref": "#/components/schemas/ClusterGetAll"
                 }
               }
             }
@@ -123,9 +104,9 @@
         "tags": [
           "clusters"
         ],
-        "summary": "Get the details of project",
+        "summary": "Get the details of cluster",
         "description": "",
-        "operationId": "ProjectDetails",
+        "operationId": "ClusterDetails",
         "parameters": [
           {
             "in": "path",
@@ -143,20 +124,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProjectIdResponse"
+                  "$ref": "#/components/schemas/ClusterGetResponse"
                 }
               }
             }
           },
           "400": {
-            "description": "Invalid Project",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProjectInvalid"
-                }
-              }
-            }
+            "description": "Failure"
           }
         }
       },
@@ -184,7 +158,10 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProjectDeleteResponse"
+                  "$ref": "#/components/schemas/DeleteResponse"
+                },
+                "example": {
+                  "message": "cluster 5e431601a77ab8f674cc86b6 deleted"
                 }
               }
             }
@@ -203,13 +180,13 @@
       }
     },
     "/cluster/{cluster_id}/tags": {
-      "get": {
+      "post": {
         "tags": [
           "clusters"
         ],
-        "summary": "Get all the tag names under the cluster ID",
+        "summary": "add tags to the cluster ID",
         "description": "",
-        "operationId": "tags",
+        "operationId": "cluster_tags",
         "parameters": [
           {
             "in": "path",
@@ -221,26 +198,164 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "minItems": 1,
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string"
+                        },
+                        "value": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "description": "add tags to cluster",
+          "required": true
+        },
         "responses": {
           "200": {
             "description": "Success",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProjectTagResponse"
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "1 cluster updated"
+                    }
+                  }
                 }
               }
             }
           },
           "400": {
-            "description": "Invalid Project",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProjectInvalid"
+            "description": "Invalid Project"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "clusters"
+        ],
+        "summary": "update tags to the cluster ID",
+        "description": "",
+        "operationId": "cluster_tags_update",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cluster_id",
+            "description": "cluster ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "key": {
+                    "type": "string",
+                    "example": "owner"
+                  },
+                  "value": {
+                    "type": "string",
+                    "example": "teamB"
+                  }
                 }
               }
             }
+          },
+          "description": "add tags to cluster",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "1 cluster updated"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Project"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "clusters"
+        ],
+        "summary": "delete tags to the cluster ID",
+        "description": "",
+        "operationId": "cluster_tags_delete",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "tags",
+            "required": true,
+            "description": "The list of tag keys to be deleted",
+            "schema": {
+              "type": "array",
+              "minimum": 1,
+              "default": 1,
+              "items": [
+                {
+                  "key": {
+                    "type": "string",
+                    "example": "abcd"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "1 cluster updated"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Project"
           }
         }
       }
@@ -560,38 +675,41 @@
   },
   "servers": [
     {
-      "url": "http://localhost:8081/cmm/api/v1",
-      "description": "Local"
+      "url": "http://13.235.8.67:8000/cmm/api/v1",
+      "description": "AWS ECE"
+    },
+    {
+      "url": "http://localhost:8000/cmm/api/v1",
+      "description": "local"
     }
   ],
   "components": {
     "parameters": {
       "offsetParam": {
         "in": "query",
-        "name": "offset",
-        "required": false,
+        "name": "page",
+        "required": true,
         "description": "The number of items to skip before starting to collect the result set.",
         "schema": {
           "type": "integer",
-          "minimum": 0,
-          "default": 0
+          "minimum": 1,
+          "default": 1
         }
       },
       "limitParam": {
         "in": "query",
         "name": "limit",
-        "required": false,
+        "required": true,
         "description": "The numbers of items to return.",
         "schema": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 50,
           "default": 10
         }
       },
       "sort_order": {
         "in": "query",
-        "name": "sort_order",
+        "name": "order",
         "description": "Optional filter based on status",
         "required": false,
         "schema": {
@@ -602,34 +720,58 @@
           ]
         }
       },
-      "include_aggregate": {
+      "cluster_id": {
         "in": "query",
-        "name": "include_aggregate",
-        "description": "Optional filter whether to include_aggregate files",
-        "required": false,
+        "name": "cluster_id",
+        "description": "Optional filter on cluster_id of instances",
+        "required": true,
         "schema": {
-          "type": "boolean",
-          "default": false
-        }
-      },
-      "parent_doc_id": {
-        "in": "query",
-        "name": "parent_doc_id",
-        "description": "Optional filter on parent_doc_id of files",
-        "required": false,
-        "schema": {
-          "type": "string"
+          "type": "string",
+          "example": "5e430c5aa77ab8f674cc86b1"
         }
       },
       "tag_name": {
         "in": "query",
-        "name": "tag_name",
+        "name": "tags",
         "description": "Optional filter based on tag_name",
         "required": false,
         "schema": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "example": "environment"
+              },
+              "value": {
+                "type": "string",
+                "example": "production"
+              }
+            }
+          }
+        },
+        "example": [
+          {
+            "key": "environment",
+            "value": "production"
+          },
+          {
+            "key": "storage",
+            "value": "production"
+          }
+        ]
+      },
+      "cluster_type": {
+        "in": "query",
+        "name": "type",
+        "description": "Optional filter based on cluster type",
+        "required": false,
+        "schema": {
           "type": "string",
-          "_comment": "multiple values comma seperated",
-          "example": "Batch1"
+          "enum": [
+            "AWS::ECS::Cluster"
+          ]
         }
       },
       "config_type_a": {
@@ -727,133 +869,102 @@
       }
     },
     "schemas": {
-      "Projects.create.input": {
+      "tags_input": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "key": {
+              "type": "string",
+              "example": "environment"
+            },
+            "value": {
+              "type": "string",
+              "example": "production"
+            }
+          }
+        },
+        "example": [
+          {
+            "key": "environment",
+            "value": "production"
+          },
+          {
+            "key": "storage",
+            "value": "production"
+          }
+        ]
+      },
+      "Cluster.create.input": {
         "type": "object",
         "required": [
-          "name",
-          "desc"
+          "clustername",
+          "type",
+          "region"
         ],
         "properties": {
-          "name": {
+          "templateformat": {
             "type": "string",
-            "example": "sample project"
+            "example": "sample templateformat"
           },
-          "desc": {
-            "type": "string",
-            "example": "sample project for legal"
+          "type": {
+            "type": "string"
           },
-          "locale": {
-            "type": "string",
-            "example": "USA"
+          "region": {
+            "type": "string"
           },
-          "domain": {
+          "clustername": {
             "type": "string",
             "example": "Legal"
           },
-          "type": {
-            "type": "string",
+          "properties": {
+            "type": "object",
             "example": "MSA"
+          }
+        },
+        "example": {
+          "templateformat": "2010-09-09",
+          "type": "AWS::ECS::Cluster",
+          "region": "us-east-1a",
+          "clustername": "MyCluster4",
+          "properties": {
+            "clustersettings": [
+              {
+                "name": "containerInsights",
+                "value": "enabled"
+              }
+            ],
+            "tags": [
+              {
+                "key": "environment",
+                "value": "production"
+              },
+              {
+                "key": "storage",
+                "value": "production"
+              }
+            ]
           }
         },
         "xml": {
           "name": "Projects"
         }
       },
-      "DocJob": {
+      "Cluster.create.response": {
         "type": "object",
-        "required": [
-          "document_name",
-          "project_id"
-        ],
         "properties": {
-          "projects": {
-            "type": "object",
-            "properties": {
-              "hits": {
-                "type": "object",
-                "properties": {
-                  "total": {
-                    "type": "object",
-                    "properties": {
-                      "value": {
-                        "type": "integer",
-                        "example": "3"
-                      }
-                    }
-                  },
-                  "hits": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "_id": {
-                          "type": "string",
-                          "example": "eJay824BdehpG9CvrCoH"
-                        },
-                        "_source": {
-                          "type": "object",
-                          "properties": {
-                            "document_id": {
-                              "type": "string",
-                              "example": "pMnGf28B1CuG2fQxfi__"
-                            },
-                            "project_id": {
-                              "type": "string",
-                              "example": "dsm8f28B1CuG2fQxfCc5"
-                            },
-                            "status": {
-                              "type": "string",
-                              "example": "SUCCESS"
-                            },
-                            "created_by": {
-                              "type": "integer",
-                              "example": "1"
-                            },
-                            "start_time": {
-                              "type": "string",
-                              "example": ""
-                            },
-                            "created_date": {
-                              "type": "string",
-                              "example": "2019-12-11T06:43:23.246Z"
-                            },
-                            "modified_date": {
-                              "type": "string",
-                              "example": "2019-12-11T06:43:23.246Z"
-                            },
-                            "end_time": {
-                              "type": "string",
-                              "example": "2019-12-11T06:43:23.246Z"
-                            },
-                            "scheduled_time": {
-                              "type": "string",
-                              "example": "2019-12-11T06:43:23.246Z"
-                            },
-                            "celery_job_info": {
-                              "type": "string",
-                              "example": "abcd-efg-xyz"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
+          "cluster_id": {
+            "type": "string",
+            "example": "5e430c5aa77ab8f674cc86b1"
+          },
+          "message": {
+            "type": "string",
+            "example": "cluster created"
           }
         },
-        "xml": {
-          "name": "DocJob"
-        }
-      },
-      "ProjectResultResponse": {
-        "type": "object",
-        "properties": {
-          "result": {
-            "type": "string",
-            "example": "<base64>"
-          }
+        "example": {
+          "cluster_id": "5e430c5aa77ab8f674cc86b1",
+          "message": "cluster created"
         },
         "xml": {
           "name": "ProjectResultResponse"
@@ -917,68 +1028,80 @@
           "name": "ProjectResponse"
         }
       },
-      "ProjectResponse": {
+      "ClusterGetAll": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer",
+            "example": 10
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ClusterGetResponse"
+            }
+          }
+        }
+      },
+      "ClusterGetResponse": {
         "type": "object",
         "properties": {
           "project_details": {
             "type": "object",
             "properties": {
               "_id": {
-                "type": "string",
-                "example": "eJay824BdehpG9CvrCoH"
+                "type": "string"
               },
-              "_source": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string",
-                    "example": "Sample project"
-                  },
-                  "description": {
-                    "type": "string",
-                    "example": "Example project for legal docs"
-                  },
-                  "type": {
-                    "type": "object",
-                    "properties": {
-                      "domain": {
-                        "type": "string",
-                        "example": "Finance"
-                      },
-                      "location": {
-                        "type": "string",
-                        "example": "USA"
-                      },
-                      "doc_type": {
-                        "type": "string",
-                        "example": "Legal"
-                      }
-                    }
-                  },
-                  "status": {
-                    "type": "string",
-                    "example": "ACTIVE"
-                  },
-                  "created_by": {
-                    "type": "integer",
-                    "example": "1"
-                  },
-                  "output": {
-                    "type": "string",
-                    "example": "null"
-                  },
-                  "created_date": {
-                    "type": "string",
-                    "example": "2019-12-11T06:43:23.246Z"
-                  },
-                  "modified_date": {
-                    "type": "string",
-                    "example": "2019-12-11T06:43:23.246Z"
-                  }
-                }
+              "cluster_name": {
+                "type": "string",
+                "example": "Sample templateformat"
+              },
+              "type": {
+                "type": "string",
+                "example": "AWS::ECS::Cluster"
+              },
+              "region": {
+                "type": "string",
+                "example": "us-east-1a"
+              },
+              "created_date": {
+                "type": "string"
+              },
+              "updated_date": {
+                "type": "string"
+              },
+              "properties": {
+                "type": "object"
               }
             }
           }
+        },
+        "example": {
+          "_id": "5e431601a77ab8f674cc86b6",
+          "cluster_name": "MyCluster5",
+          "created_date": "2020-02-12 02:30:49",
+          "properties": {
+            "clustersettings": [
+              {
+                "name": "containerInsights",
+                "value": "enabled"
+              }
+            ],
+            "tags": [
+              {
+                "key": "environment",
+                "value": "production"
+              },
+              {
+                "key": "storage",
+                "value": "production"
+              }
+            ]
+          },
+          "region": "us-east-1a",
+          "templateformat": "2010-09-09",
+          "type": "AWS::ECS::Cluster",
+          "updated_date": "2020-02-12 02:30:49"
         },
         "xml": {
           "name": "ProjectResponse"
@@ -1050,16 +1173,15 @@
           "name": "ProjectResponse"
         }
       },
-      "ProjectDeleteResponse": {
+      "DeleteResponse": {
         "type": "object",
         "properties": {
           "message": {
-            "type": "string",
-            "example": "Deleted the project and 2 documents"
+            "type": "string"
           }
         },
         "xml": {
-          "name": "ProjectResponse"
+          "name": "DeleteResponse"
         }
       },
       "ProjectInvalid": {
