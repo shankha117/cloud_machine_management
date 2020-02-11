@@ -20,6 +20,8 @@ services:
       - mongo_db_password=cmm#secret123
       - mongo_db_name=cmm
       - debugger=True
+    volumes:
+      - ./cmm_logs:/cmm/logs
     networks:
       - backend
 
@@ -31,12 +33,20 @@ services:
       - MONDODB_LOG_DIR=/dev/null
 
     volumes:
+      - ./db_data:/data/db:rw
       - ./scripts:/docker-entrypoint-initdb.d
     networks:
       - backend
 
 
-
+#  nginx:
+#    container_name: nginx
+#    restart: always
+#    build: ./nginx
+#    ports:
+#      - "80:80"
+#    depends_on:
+#      - cmm-rest
 networks:
   backend:
     driver: bridge
