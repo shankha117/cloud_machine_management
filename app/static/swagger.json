@@ -49,6 +49,10 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Cluster.create.response"
+                },
+                "example": {
+                  "cluster_id": "5e430c5aa77ab8f674cc86b1",
+                  "message": "cluster created"
                 }
               }
             }
@@ -64,7 +68,7 @@
         ],
         "summary": "Get all clusters",
         "description": "Get one or more clusters based on given filter criteria",
-        "operationId": "GetProjects",
+        "operationId": "Getclusters",
         "parameters": [
           {
             "$ref": "#/components/parameters/offsetParam"
@@ -138,9 +142,9 @@
         "tags": [
           "clusters"
         ],
-        "summary": "Delete the project by ID",
+        "summary": "Delete the cluster by ID",
         "description": "",
-        "operationId": "deleteProject",
+        "operationId": "deleteCluster",
         "parameters": [
           {
             "in": "path",
@@ -167,14 +171,7 @@
             }
           },
           "400": {
-            "description": "Invalid Project",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProjectInvalid"
-                }
-              }
-            }
+            "description": "Invalid Cluster"
           }
         }
       }
@@ -244,7 +241,7 @@
             }
           },
           "400": {
-            "description": "Invalid Project"
+            "description": "Invalid cluster"
           }
         }
       },
@@ -305,7 +302,7 @@
             }
           },
           "400": {
-            "description": "Invalid Project"
+            "description": "Invalid cluster"
           }
         }
       },
@@ -318,23 +315,29 @@
         "operationId": "cluster_tags_delete",
         "parameters": [
           {
+            "in": "path",
+            "name": "cluster_id",
+            "description": "cluster ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
             "in": "query",
             "name": "tags",
             "required": true,
             "description": "The list of tag keys to be deleted",
             "schema": {
               "type": "array",
-              "minimum": 1,
-              "default": 1,
-              "items": [
-                {
-                  "key": {
-                    "type": "string",
-                    "example": "abcd"
-                  }
-                }
-              ]
-            }
+              "items": {
+                "type": "string"
+              }
+            },
+            "example": [
+              "environment",
+              "owner"
+            ]
           }
         ],
         "responses": {
@@ -355,7 +358,7 @@
             }
           },
           "400": {
-            "description": "Invalid Project"
+            "description": "Invalid cluster"
           }
         }
       }
@@ -372,11 +375,11 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Docs"
+                "$ref": "#/components/schemas/Instance.create.input"
               }
             }
           },
-          "description": "Add new Document",
+          "description": "Add new instance",
           "required": true
         },
         "responses": {
@@ -385,7 +388,11 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DocumentMetadata"
+                  "$ref": "#/components/schemas/Cluster.create.response"
+                },
+                "example": {
+                  "instance_id": "5e430c5aa77ab8f674cc86b1",
+                  "message": "instance created"
                 }
               }
             }
@@ -404,25 +411,13 @@
         "operationId": "getinstances",
         "parameters": [
           {
-            "in": "query",
-            "name": "project_id",
-            "description": "Project id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "$ref": "#/components/parameters/offsetParam"
           },
           {
             "$ref": "#/components/parameters/limitParam"
           },
           {
-            "$ref": "#/components/parameters/status_filter"
-          },
-          {
-            "$ref": "#/components/parameters/sort_by"
+            "$ref": "#/components/parameters/instance_type"
           },
           {
             "$ref": "#/components/parameters/sort_order"
@@ -431,19 +426,10 @@
             "$ref": "#/components/parameters/tag_name"
           },
           {
-            "$ref": "#/components/parameters/include_aggregate"
+            "$ref": "#/components/parameters/state"
           },
           {
-            "$ref": "#/components/parameters/parent_doc_id"
-          },
-          {
-            "in": "query",
-            "name": "search_word",
-            "description": "Optional keyword to filter, Match against name/desc",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
+            "$ref": "#/components/parameters/cluster_id"
           }
         ],
         "responses": {
@@ -452,7 +438,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DocListResponse"
+                  "$ref": "#/components/schemas/InstanceGetAll"
                 }
               }
             }
@@ -468,14 +454,14 @@
         "tags": [
           "instances"
         ],
-        "summary": "Get the details of the particular document",
+        "summary": "Get the instance of cluster",
         "description": "",
-        "operationId": "getinstance",
+        "operationId": "instanceDetails",
         "parameters": [
           {
             "in": "path",
             "name": "instance_id",
-            "description": "instance object that needs to be listed",
+            "description": "Instance ID",
             "required": true,
             "schema": {
               "type": "string"
@@ -488,7 +474,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DocumentDetails"
+                  "$ref": "#/components/schemas/InstanceGetResponse"
                 }
               }
             }
@@ -498,13 +484,111 @@
           }
         }
       },
-      "put": {
+      "delete": {
         "tags": [
           "instances"
         ],
-        "summary": "Update the metadata of instances",
+        "summary": "Delete the instance by ID",
         "description": "",
-        "operationId": "updateinstance",
+        "operationId": "deleteInstance",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instance_id",
+            "description": "Instance ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteResponse"
+                },
+                "example": {
+                  "message": "instance 5e431601a77ab8f674cc86b6 deleted"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid instance"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "instances"
+        ],
+        "summary": "perform task on instance",
+        "description": "",
+        "operationId": "performtask",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instance_id",
+            "description": "Instance ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "task": {
+                    "type": "string",
+                    "example": "ON"
+                  }
+                }
+              }
+            }
+          },
+          "description": "perform task on instance",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Operation OFF performed on 5e438ed05ff0099c5ef38e03"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failure"
+          }
+        }
+      }
+    },
+    "/instance/{instance_id}/tags": {
+      "post": {
+        "tags": [
+          "instances"
+        ],
+        "summary": "add tags to the cluster ID",
+        "description": "",
+        "operationId": "instance_tags",
         "parameters": [
           {
             "in": "path",
@@ -520,11 +604,28 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/DocumentPut"
+                "type": "object",
+                "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "minItems": 1,
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string"
+                        },
+                        "value": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
               }
             }
           },
-          "description": "Update Document",
+          "description": "add tags to cluster",
           "required": true
         },
         "responses": {
@@ -533,13 +634,80 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DocumentDetails"
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "1 cluster updated"
+                    }
+                  }
                 }
               }
             }
           },
           "400": {
-            "description": "Invalid ID supplied"
+            "description": "Invalid clusters"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "instances"
+        ],
+        "summary": "update tags to the instance ID",
+        "description": "",
+        "operationId": "instance_tags_update",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instance_id",
+            "description": "instance ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "key": {
+                    "type": "string",
+                    "example": "owner"
+                  },
+                  "value": {
+                    "type": "string",
+                    "example": "teamB"
+                  }
+                }
+              }
+            }
+          },
+          "description": "add tags to cluster",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "1 cluster updated"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid instance"
           }
         }
       },
@@ -547,18 +715,34 @@
         "tags": [
           "instances"
         ],
-        "summary": "Delete a particular instance",
+        "summary": "delete tags to the instance ID",
         "description": "",
-        "operationId": "DeleteDocumentApi",
+        "operationId": "instance_tags_delete",
         "parameters": [
           {
             "in": "path",
             "name": "instance_id",
-            "description": "id of the corresponding instance to be deleted",
+            "description": "instance ID",
             "required": true,
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "in": "query",
+            "name": "tags",
+            "required": true,
+            "description": "The list of tag keys to be deleted",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "example": [
+              "environment",
+              "owner"
+            ]
           }
         ],
         "responses": {
@@ -571,7 +755,7 @@
                   "properties": {
                     "message": {
                       "type": "string",
-                      "example": "Deleted the document"
+                      "example": "1 cluster updated"
                     }
                   }
                 }
@@ -579,57 +763,13 @@
             }
           },
           "400": {
-            "description": "Invalid ID supplied"
-          }
-        }
-      }
-    },
-    "/instance/{instance_id}/tags": {
-      "get": {
-        "tags": [
-          "instances"
-        ],
-        "summary": "Get the instance file content",
-        "description": "contents of the document",
-        "operationId": "DocumentContentsApi",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "instance_id",
-            "description": "instances id of the document",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "$ref": "#/components/parameters/highlighted"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "document_contents": {
-                      "$ref": "#/components/schemas/DocFileContents"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid ID supplied"
+            "description": "Invalid instance"
           }
         }
       }
     },
     "/instance/{instance_id}/bulk": {
-      "get": {
+      "post": {
         "tags": [
           "instances"
         ],
@@ -640,14 +780,29 @@
           {
             "in": "path",
             "name": "instance_id",
-            "description": "Document id of the document",
+            "description": "instance ID",
             "required": true,
             "schema": {
               "type": "string"
             }
           },
           {
-            "$ref": "#/components/parameters/highlighted"
+            "$ref": "#/components/parameters/instance_type"
+          },
+          {
+            "$ref": "#/components/parameters/tag_name"
+          },
+          {
+            "$ref": "#/components/parameters/state"
+          },
+          {
+            "$ref": "#/components/parameters/cluster_id_required_false"
+          },
+          {
+            "$ref": "#/components/parameters/operation"
+          },
+          {
+            "$ref": "#/components/parameters/is_async"
           }
         ],
         "responses": {
@@ -658,8 +813,25 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "document_contents": {
-                      "$ref": "#/components/schemas/DocFileContents"
+                    "message": {
+                      "type": "string",
+                      "example": "operation ``ON`` successfully performed on total-1 instances"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "perform async bulk task",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "bulk operation accepted"
                     }
                   }
                 }
@@ -679,7 +851,7 @@
       "description": "AWS ECE"
     },
     {
-      "url": "http://localhost:8000/cmm/api/v1",
+      "url": "http://localhost:8081/cmm/api/v1",
       "description": "local"
     }
   ],
@@ -718,6 +890,16 @@
             "asc",
             "desc"
           ]
+        }
+      },
+      "cluster_id_required_false": {
+        "in": "query",
+        "name": "cluster_id",
+        "description": "Optional filter on cluster_id of instances",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "example": "5e430c5aa77ab8f674cc86b1"
         }
       },
       "cluster_id": {
@@ -762,6 +944,58 @@
           }
         ]
       },
+      "instance_type": {
+        "in": "query",
+        "name": "instance_type",
+        "description": "Optional filter based on cluster type",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "m1.small"
+          ]
+        }
+      },
+      "operation": {
+        "in": "query",
+        "name": "state",
+        "description": "Optional filter based on cluster type",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "ON",
+            "OFF"
+          ]
+        }
+      },
+      "is_async": {
+        "in": "query",
+        "name": "state",
+        "description": "Optional filter based on cluster type",
+        "required": false,
+        "schema": {
+          "type": "boolean",
+          "enum": [
+            true,
+            false
+          ],
+          "default": true
+        }
+      },
+      "state": {
+        "in": "query",
+        "name": "state",
+        "description": "Optional filter based on cluster type",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "ON",
+            "OFF"
+          ]
+        }
+      },
       "cluster_type": {
         "in": "query",
         "name": "type",
@@ -772,91 +1006,6 @@
           "enum": [
             "AWS::ECS::Cluster"
           ]
-        }
-      },
-      "config_type_a": {
-        "in": "query",
-        "name": "locale",
-        "description": "Optional filter based on locale type",
-        "required": false,
-        "schema": {
-          "type": "string"
-        }
-      },
-      "config_type_b": {
-        "in": "query",
-        "name": "domain",
-        "description": "Optional filter based on domain type",
-        "required": false,
-        "schema": {
-          "type": "string"
-        }
-      },
-      "config_type_c": {
-        "in": "query",
-        "name": "document_type",
-        "description": "Optional filter based on document type",
-        "required": false,
-        "schema": {
-          "type": "string"
-        }
-      },
-      "AuthToken": {
-        "in": "header",
-        "name": "Authorization",
-        "description": "Token from keycloak, format - Bearer",
-        "required": false,
-        "schema": {
-          "type": "string"
-        }
-      },
-      "user_id": {
-        "in": "header",
-        "name": "user_id",
-        "description": "User id if security is disabled",
-        "required": false,
-        "schema": {
-          "type": "string"
-        }
-      },
-      "status_filter": {
-        "in": "query",
-        "name": "status",
-        "description": "Optional filter based on status",
-        "required": false,
-        "schema": {
-          "type": "string",
-          "enum": [
-            "NEW",
-            "WAITING",
-            "SCHEDULED",
-            "RUNNING",
-            "FAILED",
-            "SUCCESS"
-          ]
-        }
-      },
-      "sort_by": {
-        "in": "query",
-        "name": "sort_by",
-        "description": "Sort based on date",
-        "required": false,
-        "schema": {
-          "type": "string",
-          "enum": [
-            "created_date",
-            "modified_date"
-          ]
-        }
-      },
-      "highlighted": {
-        "in": "query",
-        "name": "highlighted",
-        "description": "Get the hightlighted PDF",
-        "required": false,
-        "schema": {
-          "type": "boolean",
-          "default": false
         }
       }
     },
@@ -869,32 +1018,6 @@
       }
     },
     "schemas": {
-      "tags_input": {
-        "type": "array",
-        "items": {
-          "type": "object",
-          "properties": {
-            "key": {
-              "type": "string",
-              "example": "environment"
-            },
-            "value": {
-              "type": "string",
-              "example": "production"
-            }
-          }
-        },
-        "example": [
-          {
-            "key": "environment",
-            "value": "production"
-          },
-          {
-            "key": "storage",
-            "value": "production"
-          }
-        ]
-      },
       "Cluster.create.input": {
         "type": "object",
         "required": [
@@ -947,85 +1070,182 @@
           }
         },
         "xml": {
-          "name": "Projects"
+          "name": "Cluster"
         }
       },
       "Cluster.create.response": {
         "type": "object",
         "properties": {
           "cluster_id": {
-            "type": "string",
-            "example": "5e430c5aa77ab8f674cc86b1"
+            "type": "string"
           },
           "message": {
+            "type": "string"
+          }
+        },
+        "xml": {
+          "name": "ClusterResultResponse"
+        }
+      },
+      "Instance.create.input": {
+        "type": "object",
+        "required": [
+          "clustername",
+          "type",
+          "region"
+        ],
+        "properties": {
+          "cluster_id": {
             "type": "string",
-            "example": "cluster created"
+            "example": "sample templateformat"
+          },
+          "instance_name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "keypair": {
+            "type": "object"
+          },
+          "instance_type": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "security_groups": {
+            "type": "object"
           }
         },
         "example": {
-          "cluster_id": "5e430c5aa77ab8f674cc86b1",
-          "message": "cluster created"
+          "cluster_id": "5e406a5fc2253fbbd3094783",
+          "instance_name": "instance3",
+          "type": "AWS::EC2::Instance",
+          "keypair": {
+            "name": "mycluster_key",
+            "Format": "SSH public key file format"
+          },
+          "instance_type": "m1.small",
+          "tags": [
+            {
+              "key": "owner",
+              "value": "TeamA"
+            },
+            {
+              "key": "environment",
+              "value": "production"
+            }
+          ],
+          "security_groups": {
+            "name": "some_name",
+            "VPC": "some_id"
+          },
+          "image": {
+            "os": "ubuntu",
+            "virtualization": "HVM",
+            "Architecture": "32",
+            "Storage": "EBS"
+          }
         },
         "xml": {
-          "name": "ProjectResultResponse"
+          "name": "Instance"
         }
       },
-      "TagResultResponse": {
+      "InstanceGetAll": {
         "type": "object",
         "properties": {
-          "_id": {
-            "type": "string",
-            "example": "fJay824BdehpG9CvrCoH"
+          "count": {
+            "type": "integer",
+            "example": 10
           },
-          "_source": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InstanceGetResponse"
+            }
+          }
+        }
+      },
+      "InstanceGetResponse": {
+        "type": "object",
+        "properties": {
+          "Instance_details": {
             "type": "object",
             "properties": {
-              "project_id": {
-                "type": "string",
-                "example": "fJay824BdehpG9CvrCoH"
+              "_id": {
+                "type": "string"
               },
-              "tag_name": {
-                "type": "string",
-                "example": "batch1234"
+              "cluster_id": {
+                "type": "string"
               },
-              "status": {
-                "type": "string",
-                "example": "RUNNING"
+              "state": {
+                "type": "string"
               },
-              "created_time": {
-                "type": "string",
-                "example": "2019-12-11T06:43:23.246Z"
+              "instance_name": {
+                "type": "string"
               },
-              "updated_time": {
-                "type": "string",
-                "example": "2019-12-11T06:43:23.246Z"
+              "type": {
+                "type": "string"
               },
-              "statistics": {
-                "type": "object",
-                "properties": {
-                  "total": {
-                    "type": "integer",
-                    "example": 20
-                  },
-                  "success": {
-                    "type": "integer",
-                    "example": 10
-                  },
-                  "failure": {
-                    "type": "integer",
-                    "example": 5
-                  },
-                  "running": {
-                    "type": "integer",
-                    "example": 5
-                  }
-                }
+              "region": {
+                "type": "string"
+              },
+              "created_date": {
+                "type": "string"
+              },
+              "updated_date": {
+                "type": "string"
+              },
+              "properties": {
+                "type": "object"
               }
             }
           }
         },
+        "example": {
+          "_id": "5e438ed05ff0099c5ef38e03",
+          "cluster_id": "5e438ec65ff0099c5ef38e01",
+          "created_date": "2020-02-12 11:06:16",
+          "instance_name": "instance3",
+          "properties": {
+            "image": {
+              "Architecture": "32",
+              "Storage": "EBS",
+              "os": "ubuntu",
+              "virtualization": "HVM"
+            },
+            "instance_type": "m1.small",
+            "ip_address": "210.20.1.49",
+            "keypair": {
+              "Format": "SSH public key file format",
+              "name": "mycluster_key"
+            },
+            "security_groups": {
+              "VPC": "some_id",
+              "name": "some_name"
+            },
+            "tags": [
+              {
+                "key": "owner",
+                "value": "TeamA"
+              },
+              {
+                "key": "environment",
+                "value": "production"
+              }
+            ]
+          },
+          "region": "us-east-1a",
+          "state": "OFF",
+          "type": "AWS::EC2::Instance",
+          "updated_date": "2020-02-12 11:06:16"
+        },
         "xml": {
-          "name": "ProjectResponse"
+          "name": "InstanceResponse"
         }
       },
       "ClusterGetAll": {
@@ -1046,7 +1266,7 @@
       "ClusterGetResponse": {
         "type": "object",
         "properties": {
-          "project_details": {
+          "instance_details": {
             "type": "object",
             "properties": {
               "_id": {
@@ -1104,73 +1324,7 @@
           "updated_date": "2020-02-12 02:30:49"
         },
         "xml": {
-          "name": "ProjectResponse"
-        }
-      },
-      "ProjectUpdateResponse": {
-        "type": "object",
-        "properties": {
-          "project_details": {
-            "type": "object",
-            "properties": {
-              "_id": {
-                "type": "string"
-              },
-              "_source": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string",
-                    "example": "project new"
-                  },
-                  "description": {
-                    "type": "string",
-                    "example": "My new project"
-                  },
-                  "type": {
-                    "type": "object",
-                    "properties": {
-                      "domain": {
-                        "type": "string",
-                        "example": "Finanace"
-                      },
-                      "location": {
-                        "type": "string",
-                        "example": "USA"
-                      },
-                      "doc_type": {
-                        "type": "string",
-                        "example": "Legal"
-                      }
-                    }
-                  },
-                  "status": {
-                    "type": "string",
-                    "example": "Legal"
-                  },
-                  "created_by": {
-                    "type": "integer",
-                    "example": "1"
-                  },
-                  "output": {
-                    "type": "string",
-                    "example": ""
-                  },
-                  "created_date": {
-                    "type": "string",
-                    "example": "2019-12-11T06:43:23.246Z"
-                  },
-                  "modified_date": {
-                    "type": "string",
-                    "example": "2019-12-11T06:43:23.246Z"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "xml": {
-          "name": "ProjectResponse"
+          "name": "ClusterResponse"
         }
       },
       "DeleteResponse": {
@@ -1183,613 +1337,6 @@
         "xml": {
           "name": "DeleteResponse"
         }
-      },
-      "ProjectInvalid": {
-        "type": "object",
-        "properties": {
-          "title": {
-            "type": "string",
-            "example": "project_id"
-          },
-          "description": {
-            "type": "string",
-            "example": "Field 'project_id': Expects a valid project"
-          }
-        },
-        "xml": {
-          "name": "ProjectResponse"
-        }
-      },
-      "TagInvalid": {
-        "type": "object",
-        "properties": {
-          "title": {
-            "type": "string",
-            "example": "tag_name"
-          },
-          "description": {
-            "type": "string",
-            "example": "Field 'tag_name' Expects a valid tag name"
-          }
-        },
-        "xml": {
-          "name": "ProjectResponse"
-        }
-      },
-      "ProjectGetResponse": {
-        "type": "object",
-        "properties": {
-          "projects": {
-            "type": "object",
-            "properties": {
-              "hits": {
-                "type": "object",
-                "properties": {
-                  "total": {
-                    "type": "object",
-                    "properties": {
-                      "value": {
-                        "type": "integer",
-                        "example": "3"
-                      }
-                    }
-                  },
-                  "hits": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "_id": {
-                          "type": "string",
-                          "example": "eJay824BdehpG9CvrCoH"
-                        },
-                        "_source": {
-                          "type": "object",
-                          "properties": {
-                            "name": {
-                              "type": "string",
-                              "example": "project new"
-                            },
-                            "description": {
-                              "type": "string",
-                              "example": "My new project"
-                            },
-                            "type": {
-                              "type": "object",
-                              "properties": {
-                                "domain": {
-                                  "type": "string",
-                                  "example": "Finanace"
-                                },
-                                "location": {
-                                  "type": "string",
-                                  "example": "USA"
-                                },
-                                "doc_type": {
-                                  "type": "string",
-                                  "example": "Legal"
-                                }
-                              }
-                            },
-                            "status": {
-                              "type": "string",
-                              "example": "Legal"
-                            },
-                            "created_by": {
-                              "type": "integer",
-                              "example": "1"
-                            },
-                            "output": {
-                              "type": "string",
-                              "example": ""
-                            },
-                            "created_date": {
-                              "type": "string",
-                              "example": "2019-12-11T06:43:23.246Z"
-                            },
-                            "modified_date": {
-                              "type": "string",
-                              "example": "2019-12-11T06:43:23.246Z"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "xml": {
-          "name": "ProjectGetResponse"
-        }
-      },
-      "ProjectIdResponse": {
-        "type": "object",
-        "properties": {
-          "project_details": {
-            "type": "object",
-            "properties": {
-              "_id": {
-                "type": "string",
-                "example": "eJay824BdehpG9CvrCoH"
-              },
-              "_source": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string",
-                    "example": "Sample project"
-                  },
-                  "description": {
-                    "type": "string",
-                    "example": "Example project for legal docs"
-                  },
-                  "type": {
-                    "type": "object",
-                    "properties": {
-                      "domain": {
-                        "type": "string",
-                        "example": "Finance"
-                      },
-                      "location": {
-                        "type": "string",
-                        "example": "USA"
-                      },
-                      "doc_type": {
-                        "type": "string",
-                        "example": "Legal"
-                      }
-                    }
-                  },
-                  "status": {
-                    "type": "string",
-                    "example": "ACTIVE"
-                  },
-                  "created_by": {
-                    "type": "integer",
-                    "example": "1"
-                  },
-                  "output": {
-                    "type": "string",
-                    "example": "null"
-                  },
-                  "created_date": {
-                    "type": "string",
-                    "example": "2019-12-11T06:43:23.246Z"
-                  },
-                  "modified_date": {
-                    "type": "string",
-                    "example": "2019-12-11T06:43:23.246Z"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "xml": {
-          "name": "ProjectIdResponse"
-        }
-      },
-      "ProjectTagResponse": {
-        "type": "object",
-        "properties": {
-          "tags": {
-            "type": "object",
-            "properties": {
-              "hits": {
-                "type": "object",
-                "properties": {
-                  "total": {
-                    "type": "object",
-                    "properties": {
-                      "value": {
-                        "type": "integer",
-                        "example": "1"
-                      }
-                    }
-                  },
-                  "hits": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "_id": {
-                          "type": "string",
-                          "example": "fJay824BdehpG9CvrCoH"
-                        },
-                        "_source": {
-                          "type": "object",
-                          "properties": {
-                            "project_id": {
-                              "type": "string",
-                              "example": "fJay824BdehpG9CvrCoH"
-                            },
-                            "tag_name": {
-                              "type": "string",
-                              "example": "batch1234"
-                            },
-                            "status": {
-                              "type": "string",
-                              "example": "RUNNING"
-                            },
-                            "created_time": {
-                              "type": "string",
-                              "example": "2019-12-11T06:43:23.246Z"
-                            },
-                            "updated_time": {
-                              "type": "string",
-                              "example": "2019-12-11T06:43:23.246Z"
-                            },
-                            "statistics": {
-                              "type": "object",
-                              "properties": {
-                                "total": {
-                                  "type": "integer",
-                                  "example": 20
-                                },
-                                "success": {
-                                  "type": "integer",
-                                  "example": 10
-                                },
-                                "failure": {
-                                  "type": "integer",
-                                  "example": 5
-                                },
-                                "running": {
-                                  "type": "integer",
-                                  "example": 5
-                                }
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "xml": {
-          "name": "ProjectTagResponse"
-        }
-      },
-      "Docs": {
-        "type": "object",
-        "required": [
-          "document_name",
-          "project_id",
-          "Doc File"
-        ],
-        "properties": {
-          "project_id": {
-            "type": "string",
-            "example": "e4f1d710-062f-4cdb-9f99-92436b494d05"
-          },
-          "document_name": {
-            "type": "string",
-            "example": "sample_doc.pdf"
-          },
-          "tags": {
-            "type": "string",
-            "_comment": "multiple values comma seperated",
-            "example": "BatchABC"
-          },
-          "locale": {
-            "type": "string",
-            "example": "en-us"
-          },
-          "domain": {
-            "type": "string",
-            "example": "finance"
-          },
-          "type": {
-            "type": "string",
-            "example": "stakeholder reports"
-          },
-          "schedule_flag": {
-            "type": "boolean",
-            "default": false,
-            "example": false
-          },
-          "doc_file": {
-            "$ref": "#/components/schemas/DocFileContents"
-          }
-        },
-        "xml": {
-          "name": "Docs"
-        }
-      },
-      "DocumentMetadata": {
-        "type": "object",
-        "properties": {
-          "document_name": {
-            "type": "string"
-          },
-          "project_id": {
-            "type": "string"
-          },
-          "tags": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "example": "BatchABC"
-            }
-          },
-          "domain_metadata": {
-            "type": "object",
-            "properties": {
-              "domain": {
-                "type": "string"
-              },
-              "locale": {
-                "type": "string"
-              },
-              "type": {
-                "type": "string"
-              }
-            }
-          },
-          "storage_link": {
-            "type": "string"
-          },
-          "status": {
-            "type": "string"
-          },
-          "created_date": {
-            "type": "string"
-          },
-          "created_by": {
-            "type": "integer"
-          },
-          "modified_by": {
-            "type": "integer"
-          },
-          "modified_date": {
-            "type": "string"
-          },
-          "annotated_doc_link": {
-            "type": "string"
-          },
-          "sha_data": {
-            "type": "string"
-          },
-          "file_type": {
-            "type": "string"
-          },
-          "aggregate_file": {
-            "type": "string"
-          },
-          "parent_doc_id": {
-            "type": "string"
-          },
-          "error_code": {
-            "type": "string"
-          },
-          "error_message": {
-            "type": "string"
-          },
-          "error_trace": {
-            "type": "string"
-          }
-        },
-        "example": {
-          "document_name": "sample_doc.pdf",
-          "project_id": "g6oi0G4BMzZAQpzGKCUz",
-          "tags": [
-            "Batch1",
-            "Batch2"
-          ],
-          "_comment": "multiple values comma seperated",
-          "storage_link": "/home/akhilraj/projects/du-solution/src/data_fs/tmp/2019_12_05.13_48_09_148239/BW_file.jpg",
-          "annotated_doc_link": "/home/akhilraj/projects/du-solution/src/data_fs/tmp/2019_12_05.13_48_09_148239/BW_file.pdf",
-          "status": "ACTIVE",
-          "domain_metadata": {
-            "domain": "finance",
-            "locale": "en-us",
-            "type": "stakeholder reports"
-          },
-          "sha_data": "4f28cfa88d374450e1600d9a12e969cdb10b344fd171977bd93019e9c87972db39418c0033df548146cf11a5a0904ca15ed157a66f92052eb76449b2522fa3bf",
-          "file_type": "pdf",
-          "aggregate_file": false,
-          "parent_doc_id": "1Mi7-28BKg6z5TpQN2TB",
-          "error_code": "",
-          "error_message": "",
-          "error_trace": "",
-          "created_date": "2019-12-05T08:18:09.148Z",
-          "created_by": 1,
-          "modified_by": 1,
-          "modified_date": "2019-12-05T08:18:09.148Z"
-        },
-        "xml": {
-          "name": "DocumentMetadata"
-        }
-      },
-      "DocFileContents": {
-        "type": "string",
-        "format": "binary",
-        "example": "34543534v543v534vdfgdfgdf"
-      },
-      "DocumentDetails": {
-        "type": "object",
-        "properties": {
-          "document_details": {
-            "type": "object",
-            "$ref": "#/components/schemas/DocListsObjects"
-          }
-        }
-      },
-      "DocListResponse": {
-        "type": "object",
-        "properties": {
-          "documents": {
-            "type": "object",
-            "properties": {
-              "hits": {
-                "type": "object",
-                "properties": {
-                  "total": {
-                    "type": "integer",
-                    "example": 100
-                  },
-                  "hits": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/DocListsObjects"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "DocListsObjects": {
-        "type": "object",
-        "properties": {
-          "_id": {
-            "type": "string",
-            "example": "zTTOjW8BuQEOahspthI-"
-          },
-          "_source": {
-            "$ref": "#/components/schemas/DocumentMetadata"
-          }
-        }
-      },
-      "Documents_results_response": {
-        "type": "object",
-        "properties": {
-          "batch_id": {
-            "type": "string",
-            "example": "b32a9772-d08d-4315-9a6a-5c487da87a39"
-          },
-          "results": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Vespa_results"
-            }
-          }
-        }
-      },
-      "DocumentPut": {
-        "type": "object",
-        "required": [
-          "name"
-        ],
-        "properties": {
-          "name": {
-            "type": "string",
-            "example": "sample document"
-          },
-          "domain": {
-            "type": "string",
-            "example": "sample domain"
-          },
-          "locale": {
-            "type": "string",
-            "example": "sample locale"
-          },
-          "tags": {
-            "type": "string",
-            "example": "Batch2",
-            "_comment": "multiple values comma seperated"
-          },
-          "type": {
-            "type": "string",
-            "example": "sample type"
-          }
-        },
-        "xml": {
-          "name": "DocumentPut"
-        }
-      },
-      "Vespa_results": {
-        "type": "object",
-        "properties": {
-          "answer": {
-            "type": "string"
-          },
-          "batch_id": {
-            "type": "string"
-          },
-          "document_id": {
-            "type": "string"
-          },
-          "document_name": {
-            "type": "string"
-          },
-          "document_type": {
-            "type": "string"
-          },
-          "domain": {
-            "type": "string"
-          },
-          "field": {
-            "type": "string"
-          },
-          "keyword": {
-            "type": "string"
-          },
-          "locale": {
-            "type": "string"
-          },
-          "manswer": {
-            "type": "string"
-          },
-          "old_page": {
-            "type": "integer"
-          },
-          "page": {
-            "type": "integer"
-          },
-          "para": {
-            "type": "integer"
-          },
-          "policy": {
-            "type": "integer"
-          },
-          "ranswer": {
-            "type": "string"
-          },
-          "raw": {
-            "type": "string"
-          },
-          "response_type": {
-            "type": "string"
-          },
-          "score": {
-            "type": "integer"
-          }
-        },
-        "example": {
-          "answer": "NA",
-          "batch_id": "b32a9772-d08d-4315-9a6a-5c487da87a39",
-          "document_id": "7458abe3-6f97-4065-b180-e781be6b72bb",
-          "document_name": "sample1.pdf",
-          "document_type": "stakeholder reports",
-          "domain": "finance",
-          "field": "CEO",
-          "keyword": "group chief executive",
-          "locale": "us",
-          "manswer": "NA",
-          "old_page": -1,
-          "page": -1,
-          "para": -1,
-          "policy": -1,
-          "ranswer": "NA",
-          "raw": "",
-          "response_type": "ALPHA",
-          "score": 0
-        },
-        "xml": {
-          "name": "Vespa_results"
-        }
-      },
-      "externalDocs": {
-        "description": "Find out more about Swagger"
       }
     }
   }

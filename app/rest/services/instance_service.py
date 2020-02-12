@@ -120,10 +120,13 @@ class Instance_Service(object):
             if instance_data[Instance.state.value] == state:
                 return jsonify({'error': 'instance {0} already in state {1}'.format(instance_id, state)}), 400
 
+            if state == "REBOOT":
+                state = "ON"
+
             result = Instance_Data_Layer().upadate_state(instance_id=instance_id, state=state)
 
             if result != 0:
-                return jsonify({'error': 'Operation {0} performed on {1}'.format(state, instance_id)}), 200
+                return jsonify({'message': 'Operation {0} performed on {1}'.format(state, instance_id)}), 200
 
         except Exception as e:
             import traceback
