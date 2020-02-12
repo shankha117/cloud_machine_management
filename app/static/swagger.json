@@ -847,7 +847,7 @@
   },
   "servers": [
     {
-      "url": "http://13.235.8.67:8000/cmm/api/v1",
+      "url": "http://13.126.124.30:8000/cmm/api/v1",
       "description": "AWS ECE"
     },
     {
