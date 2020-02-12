@@ -27,9 +27,7 @@ The system should allow users to create clusters, create machines in a cluster, 
 
 ## :rocket:&nbsp;**`Run Project`**
 
-* Manually -
-
-    ### **`Project Setup`**
+* ###**`Manually`** -
     * install a virtual environment
     * install packages from reqirement.txt
         
@@ -39,7 +37,7 @@ The system should allow users to create clusters, create machines in a cluster, 
     
         `sh start_app.sh`
         
-* Docker
+* ###**`Docker`** -
     * install docker, docker-compose
     * run the compose file from root directory
     
