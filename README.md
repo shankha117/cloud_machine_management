@@ -49,4 +49,22 @@ The system should allow users to create clusters, create machines in a cluster, 
 
     :link: `http://localhost:8081/swagger/`
     
-    
+
+## **`Deploy in AWS`**
+![Alt text](app/static/amazon-ec2.png?raw=true "Title")
+
+We will deploy this in an AWS EC2 instance with Nginx and Gunicorn.
+
+Things to do -
+
+:heavy_check_mark: Create a  free AWS account
+
+:heavy_check_mark: Select a AMI, configure server (security groups) :fire:   
+
+:heavy_check_mark: SSH to the server
+
+:heavy_check_mark: setup NGINX and systemd
+
+:heavy_check_mark: test the app from your local browser
+
+
